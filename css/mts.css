@@ -128,6 +128,43 @@
   display: none;
 }
 
+.mts-guide-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.mts-guide-tab {
+  padding: 3px 10px;
+  font-size: 11px;
+  border: 1px solid #b8c6d4;
+  background: #eef2f7;
+  cursor: pointer;
+  border-radius: 12px;
+  color: #4a6a8a;
+  font-family: Arial, sans-serif;
+  white-space: nowrap;
+}
+
+.mts-guide-tab:hover {
+  background: #dde6ef;
+}
+
+.mts-guide-tab.active {
+  background: #5a80a5;
+  color: #fff;
+  border-color: #5a80a5;
+  font-weight: 700;
+}
+
+.mts-guide-panel {
+  display: none;
+}
+
+.mts-guide-panel.active {
+  display: block;
+}
+
 .mts-tabs {
   display: flex;
   gap: 0;
