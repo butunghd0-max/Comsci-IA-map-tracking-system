@@ -200,8 +200,8 @@ function renderShell() {
           <li>Click a <b>map pin</b> to see a quick preview. Click <b>View Details</b> to open the sidebar. Click the map to close it.</li>
           <li>In the sidebar you can edit: name, type, <b>priority</b>, <b>case status</b>, coordinates, contact, notes, photos, and document links.</li>
           <li>Upload up to <b>10 photos</b> per house. Photos are automatically compressed before upload.</li>
-          <li>Use <b>WhatsApp</b> / <b>Call</b> buttons to quickly contact the house. <b>Contact</b> must be an Indonesian number (7–13 digits, starting with 0).</li>
-          <li>Use <b>Open in Google Maps</b> to navigate. <b>Coordinates</b> are editable — the pin moves when you save.</li>
+          <li>Use <b>WhatsApp</b>/<b>Call</b> buttons to quickly contact the house. <b>Contact</b> must be an Indonesian number (7-13 digits, starting with 0).</li>
+          <li>Use <b>Open in Google Maps</b> to navigate. <b>Coordinates</b> are editable - the pin moves when you save.</li>
           <li>Switch to the <b>Profiles</b> tab to see all houses as cards. Filter by <b>priority</b>, <b>case status</b>, and <b>type</b>. Search by <b>name or contact number</b>.</li>
           <li>Click <b>Export Spreadsheet</b> to download all house data as an Excel file.</li>
           <li>Use the <b>🔄 refresh</b> button on the map to sync the latest data.</li>
@@ -217,8 +217,8 @@ function renderShell() {
           <li>Klik <b>pin</b> untuk pratinjau. Klik <b>Lihat Detail</b> untuk membuka sidebar. Klik peta untuk menutupnya.</li>
           <li>Di sidebar, Anda dapat mengedit: nama, tipe, <b>prioritas</b>, <b>status kasus</b>, koordinat, kontak, catatan, foto, dan link dokumen.</li>
           <li>Unggah hingga <b>10 foto</b> per rumah. Foto otomatis dikompresi sebelum diunggah.</li>
-          <li>Gunakan tombol <b>WhatsApp</b> / <b>Telepon</b> untuk menghubungi. <b>Kontak</b> harus nomor Indonesia (7–13 digit, diawali 0).</li>
-          <li>Gunakan <b>Buka di Google Maps</b> untuk navigasi. <b>Koordinat</b> bisa diedit — pin bergeser saat disimpan.</li>
+          <li>Gunakan tombol <b>WhatsApp</b>/<b>Telepon</b> untuk menghubungi. <b>Kontak</b> harus nomor Indonesia (7-13 digit, diawali 0).</li>
+          <li>Gunakan <b>Buka di Google Maps</b> untuk navigasi. <b>Koordinat</b> bisa diedit - pin bergeser saat disimpan.</li>
           <li>Beralih ke tab <b>Profil</b> untuk melihat semua rumah. Filter berdasarkan <b>prioritas</b>, <b>status kasus</b>, dan <b>tipe</b>. Cari berdasarkan <b>nama atau nomor kontak</b>.</li>
           <li>Klik <b>Ekspor Spreadsheet</b> untuk mengunduh data sebagai file Excel.</li>
           <li>Gunakan tombol <b>🔄 segarkan</b> di peta untuk menyinkronkan data terbaru.</li>
@@ -234,8 +234,8 @@ function renderShell() {
           <li>点击<b>地图图钉</b>查看预览。点击<b>查看详情</b>打开侧边栏。点击地图空白处关闭。</li>
           <li>在侧边栏中可编辑：名称、类型、<b>优先级</b>、<b>案件状态</b>、坐标、联系方式、备注、照片和文档链接。</li>
           <li>每栋房屋最多上传<b>10张照片</b>。照片上传前会自动压缩。</li>
-          <li>使用<b>WhatsApp</b>/<b>拨打</b>按钮快速联系。<b>联系方式</b>须为印尼号码（7–13位，以0开头）。</li>
-          <li>使用<b>在Google地图中打开</b>导航。<b>坐标</b>可编辑——保存后图钉会移动。</li>
+          <li>使用<b>WhatsApp</b>/<b>拨打</b>按钮快速联系。<b>联系方式</b>须为印尼号码（7-13位，以0开头）。</li>
+          <li>使用<b>在Google地图中打开</b>导航。<b>坐标</b>可编辑 - 保存后图钉会移动。</li>
           <li>切换到<b>档案</b>选项卡查看所有房屋卡片。按<b>优先级</b>、<b>案件状态</b>、<b>类型</b>筛选。支持按<b>名称或联系方式</b>搜索。</li>
           <li>点击<b>导出表格</b>将所有数据下载为Excel文件。</li>
           <li>使用地图上的<b>🔄刷新</b>按钮同步最新数据。</li>
@@ -251,8 +251,8 @@ function renderShell() {
           <li>點擊<b>地圖圖釘</b>查看預覽。點擊<b>查看詳情</b>開啟側邊欄。點擊地圖空白處關閉。</li>
           <li>在側邊欄中可編輯：名稱、類型、<b>優先級</b>、<b>案件狀態</b>、座標、聯絡方式、備註、照片和文件連結。</li>
           <li>每棟房屋最多上傳<b>10張照片</b>。照片上傳前會自動壓縮。</li>
-          <li>使用<b>WhatsApp</b>/<b>撥打</b>按鈕快速聯繫。<b>聯絡方式</b>須為印尼號碼（7–13位，以0開頭）。</li>
-          <li>使用<b>在Google地圖中開啟</b>導航。<b>座標</b>可編輯——儲存後圖釘會移動。</li>
+          <li>使用<b>WhatsApp</b>/<b>撥打</b>按鈕快速聯繫。<b>聯絡方式</b>須為印尼號碼（7-13位，以0開頭）。</li>
+          <li>使用<b>在Google地圖中開啟</b>導航。<b>座標</b>可編輯 - 儲存後圖釘會移動。</li>
           <li>切換到<b>檔案</b>選項卡查看所有房屋卡片。按<b>優先級</b>、<b>案件狀態</b>、<b>類型</b>篩選。支持按<b>名稱或聯絡方式</b>搜尋。</li>
           <li>點擊<b>匯出表格</b>將所有資料下載為Excel檔案。</li>
           <li>使用地圖上的<b>🔄重新整理</b>按鈕同步最新資料。</li>
