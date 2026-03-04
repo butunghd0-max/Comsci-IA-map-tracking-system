@@ -163,6 +163,8 @@
 
 .mts-guide-panel.active {
   display: block;
+  max-height: 340px;
+  overflow-y: auto;
 }
 
 .mts-tabs {
