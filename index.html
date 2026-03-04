@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <!-- Supabase client (used for volunteer login lookup) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <img src="images/bg-login.png" alt="Login background" class="bg-login" id="bgLogin" />
+
+  <form id="loginForm" class="login-form" autocomplete="off">
+    <label class="sr-only" for="userId">User ID</label>
+    <input
+      id="userId"
+      name="userId"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+    />
+
+    <label class="sr-only" for="password">Password</label>
+    <input
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="new-password"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+    />
+    <button
+      id="showPasswordButton"
+      type="button"
+      aria-label="Hold to show password"
+    >
+      Show
+    </button>
+
+    <button id="loginButton" type="submit" aria-label="Login"></button>
+    <p id="loginStatus" class="login-status" aria-live="polite"></p>
+  </form>
+</body>
+</html>

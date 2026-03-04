@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Map Tracking System</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/mts.css" />
+  <!-- Leaflet (map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet MarkerCluster -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Supabase (database) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SheetJS (Excel export) -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <!-- App scripts (order matters: config → i18n → utils → map → sidebar → app) -->
+  <!-- All use defer to ensure DOM is ready; defer preserves execution order -->
+  <script src="js/config.js" defer></script>
+  <script src="js/mts-i18n.js" defer></script>
+  <script src="js/mts-utils.js" defer></script>
+  <script src="js/mts-map.js" defer></script>
+  <script src="js/mts-sidebar.js" defer></script>
+  <script src="js/mts-app.js" defer></script>
+</head>
+<body>
+  <img
+    src="images/bg-maptrackingsystem.png"
+    alt="Map Tracking System background"
+    id="bgMapTrackingSystem"
+    class="bg-maptrackingsystem"
+  />
+
+  <div id="mapTrackingOverlay" class="dashboard-overlay">
+    <span id="loggedInUserIdMap" class="logged-in-user-id"></span>
+    <a
+      id="publicActivitySidebarLinkMap"
+      class="dashboard-hotspot"
+      href="dashboard2.html"
+      aria-label="Public Activity Sidebar"
+    >
+      Public Activity
+    </a>
+    <a
+      id="publicActivitiesLinkMap"
+      class="dashboard-hotspot"
+      href="dashboard2.html"
+      aria-label="Public Activities"
+    >
+      Public Activities
+    </a>
+    <a
+      id="closeLinkMap"
+      class="dashboard-hotspot"
+      href="dashboard2.html"
+      aria-label="Close"
+    >
+      Close
+    </a>
+    <a
+      id="logoutLinkMap"
+      class="logout-hotspot"
+      href="index.html"
+      aria-label="Log Out"
+    >
+      Log Out
+    </a>
+
+    <!-- Map Tracking System app content (rendered inside the main white area) -->
+    <div id="mtsApp" class="mts-app" aria-label="Map Tracking System App"></div>
+  </div>
+</body>
+</html>

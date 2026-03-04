@@ -1,0 +1,241 @@
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background-color: #f1f1f1;
+  font-family: Arial, sans-serif;
+}
+
+.bg-login {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: -1;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.bg-dashboard {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: -1;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.bg-dashboard2 {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: -1;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.bg-maptrackingsystem {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: -1;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.dashboard-overlay {
+  position: fixed;
+  z-index: 3;
+}
+
+.logged-in-user-id {
+  position: absolute;
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+  color: #5181ab;
+  text-decoration: underline;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.dashboard-hotspot,
+.logout-hotspot {
+  position: absolute;
+  display: block;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.dashboard-tab-button {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0;
+  border: 2px solid #111;
+  border-radius: 0;
+  background: linear-gradient(
+    to bottom,
+    #cfcfcf 0%,
+    #e8e8e8 15%,
+    #d1d1d1 50%,
+    #b8b8b8 51%,
+    #d2d2d2 100%
+  );
+  box-shadow: none;
+  color: #222;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  text-shadow: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dashboard-tab-button:hover,
+.dashboard-tab-button:active,
+.dashboard-tab-button:focus {
+  border: 2px solid #111;
+  background: linear-gradient(
+    to bottom,
+    #9f9f9f 0%,
+    #c6c6c6 8%,
+    #eaeaea 16%,
+    #e4e4e4 52%,
+    #dbdbdb 78%,
+    #d6d6d6 100%
+  );
+  box-shadow: none;
+  color: #222;
+  outline: 0;
+}
+
+.dashboard-hotspot:focus,
+.logout-hotspot:focus {
+  outline: 1px solid #ff7b7b;
+  outline-offset: 0;
+}
+
+.login-form {
+  position: fixed;
+  z-index: 2;
+}
+
+.login-form input,
+.login-form button {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: #333333;
+  font-size: 12px;
+  line-height: normal;
+  padding: 0 6px;
+}
+
+.login-form input {
+  height: 22px;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+}
+
+#loginButton {
+  height: 22px;
+  cursor: pointer;
+  border: 0;
+  color: transparent;
+  opacity: 0;
+  text-decoration: none;
+  text-align: left;
+  font-weight: 400;
+  font-size: 0;
+  padding: 0;
+}
+
+#showPasswordButton {
+  height: 22px;
+  border: 1px solid #8cbdf5;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.95);
+  color: #2f7bbd;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  opacity: 1;
+  cursor: pointer;
+}
+
+#showPasswordButton:active {
+  background: rgba(223, 237, 255, 0.95);
+}
+
+.login-form input:focus,
+.login-form button:focus {
+  outline: 0;
+  outline-offset: 0;
+}
+
+.login-status {
+  position: absolute;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.login-status.error {
+  color: #b42318;
+}
+
+.login-status.success {
+  color: #0f7a35;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
