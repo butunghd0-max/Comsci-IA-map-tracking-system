@@ -197,7 +197,7 @@ function renderShell() {
 
     const G = {
       en: {
-        tabs: ["Full", "Map", "📋 Profiles", "✏️ Editing", "💡 Tips"],
+        tabs: ["Full", "🗺️Map", "📋 Profiles", "✏️ Editing", "💡 Tips"],
         map: `<ol style="${S}">
           <li>Select a <b>city</b> to load the map (only Jakarta is active in this demo).</li>
           <li>Click <b>Add pin</b>, then click on the map to place a new house. Or enter <b>Lat/Lng</b> manually and click <b>Add</b>.</li>
@@ -231,7 +231,7 @@ function renderShell() {
       },
 
       id: {
-        tabs: ["Semua", "Peta", "📋 Profil", "✏️ Edit", "💡 Tips"],
+        tabs: ["Semua", "🗺️ Peta", "📋 Profil", "✏️ Edit", "💡 Tips"],
         map: `<ol style="${S}">
           <li>Pilih <b>kota</b> untuk memuat peta (hanya Jakarta yang aktif dalam demo ini).</li>
           <li>Klik <b>Tambah pin</b>, lalu klik pada peta untuk menempatkan rumah baru. Atau masukkan <b>Lat/Lng</b> manual lalu klik <b>Tambah</b>.</li>
@@ -265,7 +265,7 @@ function renderShell() {
       },
 
       zh_cn: {
-        tabs: ["全部", "地图", "📋 档案", "✏️ 编辑", "💡 提示"],
+        tabs: ["全部", "🗺️ 地图", "📋 档案", "✏️ 编辑", "💡 提示"],
         map: `<ol style="${S}">
           <li>选择一个<b>城市</b>来加载地图（此演示中仅雅加达可用）。</li>
           <li>点击<b>添加图钉</b>，然后在地图上点击放置房屋。或手动输入<b>经纬度</b>后点击<b>添加</b>。</li>
@@ -299,7 +299,7 @@ function renderShell() {
       },
 
       zh_tw: {
-        tabs: ["全部", "地圖", "📋 檔案", "✏️ 編輯", "💡 提示"],
+        tabs: ["全部", "🗺️ 地圖", "📋 檔案", "✏️ 編輯", "💡 提示"],
         map: `<ol style="${S}">
           <li>選擇一個<b>城市</b>來加載地圖（此演示中僅雅加達可用）。</li>
           <li>點擊<b>新增圖釘</b>，然後在地圖上點擊放置房屋。或手動輸入<b>經緯度</b>後點擊<b>新增</b>。</li>
