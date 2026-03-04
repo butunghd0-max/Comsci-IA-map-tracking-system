@@ -335,10 +335,9 @@ function renderShell() {
 
     const lang = G[currentLang] || G.zh_tw;
     const keys = ["map", "profiles", "editing", "tips"];
-    const H = "font-weight:700;font-size:14px;color:#4a6a8a;margin:10px 0 2px 0;";
-    const fullContent = lang.tabs.slice(1).map((title, i) =>
-      `<div style="${H}">${title}</div>${lang[keys[i]]}`
-    ).join("");
+    const fullContent = `<ol style="${S}">` +
+      keys.map((k) => lang[k].replace(/<\/?ol[^>]*>/g, "")).join("") +
+      `</ol>`;
 
     guideEl.innerHTML = `
       <div class="mts-guide-tabs">
