@@ -1,7 +1,30 @@
 // ============================================
-// Map - Leaflet initialization, markers, clusters
+// mts-map.js - Map Engine (Leaflet Integration)
+// ============================================
+// PURPOSE: Initializes and manages the Leaflet.js map, including tile
+//   layers, marker rendering, clustering, boundary overlay, and all
+//   map-based user interactions (click to add, click to view details).
+//
+// EXTERNAL DEPENDENCIES:
+//   - Leaflet.js (L) - open-source JavaScript mapping library
+//   - Leaflet.markercluster - plugin for marker clustering
+//   - Supabase client - for fetching house data from PostgreSQL
+//
+// DESIGN PATTERNS:
+//   - Controller Pattern (setTerritory orchestrates map + data flow)
+//   - Observer Pattern (Leaflet event listeners for map interactions)
+//   - Builder Pattern (initMap builds the map layer by layer)
+//
+// KEY DATA FLOW:
+//   setTerritory() -> initMap() -> refreshHouses() -> renderMarkers()
 // ============================================
 
+// --- Territory Selection Controller ---
+// ASYNC: Fetches house data from Supabase when a city is selected.
+// Acts as the main controller for the map module, coordinating:
+// 1. UI state (enable/disable buttons and tabs)
+// 2. Map initialization (lazy - only on first selection)
+// 3. Data loading (refreshHouses from Supabase)
 async function setTerritory(value) {
   state.territory = value;
 
@@ -50,6 +73,19 @@ async function setTerritory(value) {
   await refreshHouses();
 }
 
+// --- Leaflet Map Initialization ---
+// PATTERN: Lazy Initialization - map is created once and reused.
+// This avoids DOM manipulation until the user actually selects a city.
+//
+// LAYER ARCHITECTURE (bottom to top):
+//   1. TileLayer (OpenStreetMap raster tiles)
+//   2. Rectangle (Jakarta boundary overlay)
+//   3. MarkerClusterGroup (performance-optimized marker container)
+//   4. Individual CircleMarkers (house pins)
+//
+// PERFORMANCE: MarkerClusterGroup groups nearby markers at low zoom
+//   levels, preventing thousands of DOM elements from being rendered
+//   simultaneously. This is critical for scalability.
 function initMap() {
   const bounds = window.L.latLngBounds(
     window.L.latLng(JAKARTA_BOUNDS.south, JAKARTA_BOUNDS.west),
@@ -209,6 +245,17 @@ function initMap() {
   });
 }
 
+// --- Data Refresh (Supabase REST Query) ---
+// Fetches all houses from the database, normalizes their fields,
+// and triggers re-rendering of both markers and profile cards.
+//
+// QUERY: SELECT with explicit column list (optimization - avoids
+//   transferring unnecessary data over the network).
+// ORDERING: created_at DESC (newest first).
+//
+// POST-PROCESSING: Each record is normalized via spread operator (...h)
+//   with overwritten status and priority fields to ensure consistent
+//   internal values regardless of how data was stored.
 async function refreshHouses() {
   if (!supabaseClient) return;
 
@@ -238,13 +285,17 @@ async function refreshHouses() {
   renderCards();
 }
 
+// --- Marker Lifecycle Management ---
+// clearMarkers: Removes all markers from the cluster group and the
+//   tracking Map. Called before re-rendering to avoid duplicates.
 function clearMarkers() {
   if (state.clusterGroup) {
-    state.clusterGroup.clearLayers();
+    state.clusterGroup.clearLayers(); // Leaflet API: remove all child layers
   }
-  state.markers.clear();
+  state.markers.clear(); // ES6 Map.clear() - O(1)
 }
 
+// removeHighlight: Removes the pulsing highlight circle from a pin.
 function removeHighlight() {
   if (state.highlightMarker && state.map) {
     state.map.removeLayer(state.highlightMarker);
@@ -252,6 +303,8 @@ function removeHighlight() {
   }
 }
 
+// highlightPin: Places a pulsing CSS-animated circle beneath a pin
+// to draw the user's attention. Uses L.divIcon with custom HTML/CSS.
 function highlightPin(lat, lng) {
   removeHighlight();
   if (!state.map || !window.L) return;
@@ -265,14 +318,23 @@ function highlightPin(lat, lng) {
   state.highlightMarker.addTo(state.map);
 }
 
+// --- Marker Rendering ---
+// Creates a CircleMarker for each house, colored by priority.
+// Each marker gets:
+//   - A tooltip (hover label showing house name)
+//   - A popup (click to see details + "View Details" button)
+//
+// DATA STRUCTURE: state.markers (ES6 Map)
+//   Stores houseId -> L.CircleMarker for O(1) lookup when opening
+//   sidebar, applying filters, or updating after save.
 function renderMarkers() {
   if (!state.map) return;
-  clearMarkers();
+  clearMarkers(); // Remove old markers before rebuilding
 
   for (const house of state.houses) {
     const lat = Number(house.lat);
     const lng = Number(house.lng);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue; // Skip invalid coords
 
     const color = priorityToColor(house.priority);
     const marker = window.L.circleMarker([lat, lng], {

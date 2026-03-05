@@ -1,5 +1,31 @@
 // ============================================
-// App - Shell, tabs, cards, filters, export, boot
+// mts-app.js - Application Shell & Core UI
+// ============================================
+// PURPOSE: Acts as the main entry point for the Map Tracking System.
+//   Builds the entire UI dynamically via JavaScript (no static HTML
+//   for the app body), wires up event listeners, and orchestrates
+//   the interaction between all other modules.
+//
+// MODULE RESPONSIBILITIES:
+//   1. Shell Rendering (renderShell) - generates all HTML for topbar,
+//      map container, profiles panel, sidebar, modal, and toast
+//   2. Quick Guide (tabbed, multilingual help content)
+//   3. Profile Cards (renderCards) - filterable, sortable card grid
+//   4. Filter System (multi-select dropdowns for priority/status/type)
+//   5. Export (exportToCSV) - client-side Excel export via SheetJS
+//   6. Modal System (openHouseModal/closeModal) - for house creation
+//   7. Navigation & Keyboard Shortcuts (Escape key handling)
+//   8. Online/Offline Detection (network status indicator)
+//
+// DESIGN PATTERNS:
+//   - Template Literal Pattern (HTML templating via tagged strings)
+//   - Mediator Pattern (this module coordinates all other modules)
+//   - Strategy Pattern (sort functions selected by dropdown value)
+//   - Event Delegation (single handlers for repeated UI elements)
+//
+// DATA FLOW:
+//   renderShell() -> wire events -> setTerritory() -> refreshHouses()
+//     -> renderMarkers() + renderCards()
 // ============================================
 
 function renderShell() {
@@ -296,7 +322,7 @@ function renderShell() {
           <li>按<b>Escape</b>关闭弹窗、侧边栏或取消添加图钉模式。</li>
         </ol>
         <div style="margin-top:4px;font-size:13px;color:#555;">${t("pin_colors")}：🔴 ${t("urgent")} &nbsp; 🟡 ${t("normal")} &nbsp; 🟢 ${t("stable")}</div>`
-      },
+      },  
 
       zh_tw: {
         tabs: ["全部", "🗺️ 地圖", "📋 檔案", "✏️ 編輯", "💡 提示"],

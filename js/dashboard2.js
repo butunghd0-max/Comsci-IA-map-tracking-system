@@ -1,7 +1,22 @@
-// Constants (LOGIN_PAGE, DASHBOARD_PAGE, MAP_TRACKING_PAGE, NAV_DELAY_MS, delayedNavigate)
-// are provided by config.js which is loaded before this script.
+// ============================================
+// dashboard2.js - Public Activities Dashboard Controller
+// ============================================
+// PURPOSE: Manages the "Public Activities" dashboard page.
+//   Provides navigation to the Map Tracking System, back to the
+//   main dashboard, and logout functionality.
+//
+// ARCHITECTURE: Same "Smoke and Mirrors" overlay pattern.
+//   Transparent clickable regions are positioned over a background
+//   image using proportional scaling (positionDashboard2Overlay).
+//
+// SESSION: Same localStorage-based session check as dashboard.js.
+//   Unauthorized users are redirected to the login page.
+// ============================================
 
-// Coordinates are based on bg-dashboard2.png source size (1885x911).
+// Dependencies: config.js provides LOGIN_PAGE, DASHBOARD_PAGE,
+// MAP_TRACKING_PAGE, NAV_DELAY_MS, and delayedNavigate().
+
+// Overlay coordinates based on bg-dashboard2.png source size (1885x911).
 const DASHBOARD2_OVERLAY = {
   userIdX: 473,
   userIdY: 148,

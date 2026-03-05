@@ -1,5 +1,27 @@
 // ============================================
-// Sidebar - open, close, save, photos, documents
+// mts-sidebar.js - Sidebar Panel (CRUD Operations)
+// ============================================
+// PURPOSE: Manages the detail sidebar for individual houses. Handles:
+//   - Opening/closing the sidebar with house data populated
+//   - Building the edit form dynamically (DOM generation via innerHTML)
+//   - Photo upload, compression, and gallery management
+//   - Document/link attachment management
+//   - Saving changes to Supabase (UPDATE operation)
+//   - Deleting houses from Supabase (DELETE operation)
+//
+// DESIGN PATTERNS:
+//   - Builder Pattern (openSidebar dynamically constructs the form HTML)
+//   - Observer Pattern (event listeners on form inputs for dirty tracking)
+//   - Command Pattern (save/delete as discrete async operations)
+//   - Closure Pattern (inner functions capture outer scope variables)
+//
+// SECURITY: All user input is passed through escapeHtml()/escapeAttr()
+//   before being inserted into innerHTML to prevent XSS attacks.
+//
+// STATE MANAGEMENT:
+//   state.sidebarDirty (boolean) tracks whether the user has unsaved
+//   changes. This flag triggers a confirmation dialog before navigation
+//   and the browser's beforeunload warning.
 // ============================================
 
 function closeSidebar() {

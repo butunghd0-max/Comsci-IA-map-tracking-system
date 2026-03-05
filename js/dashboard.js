@@ -1,7 +1,21 @@
-// Constants (LOGIN_PAGE, DASHBOARD2_PAGE, NAV_DELAY_MS, delayedNavigate)
-// are provided by config.js which is loaded before this script.
+// ============================================
+// dashboard.js - Main Dashboard Controller
+// ============================================
+// PURPOSE: Manages the main dashboard page after login.
+//   Displays the logged-in user's name and provides navigation
+//   to Public Activities (dashboard2) and Logout.
+//
+// ARCHITECTURE: Same "Smoke and Mirrors" overlay pattern as app.js.
+//   Background image shows the legacy system UI; transparent clickable
+//   elements are positioned over the image using scaled coordinates.
+//
+// SESSION: Reads loggedInUserId/loggedInUserName from localStorage.
+//   If no userId exists, immediately redirects to the login page
+//   (client-side authorization guard).
+// ============================================
 
-// Coordinates are based on bg-dashboard.png source size (1885x911).
+// Dependencies: config.js provides LOGIN_PAGE, DASHBOARD2_PAGE,
+// NAV_DELAY_MS, and delayedNavigate().
 const DASHBOARD_OVERLAY = {
   userIdX: 473,
   userIdY: 148,

@@ -1,14 +1,39 @@
 // ============================================
-// Utilities, state, UI references, overlay
+// mts-utils.js - Utilities, State, and UI References
+// ============================================
+// PURPOSE: Provides shared utility functions, application state,
+//   UI element references, and the overlay positioning logic for
+//   the Map Tracking System page.
+//
+// MODULE RESPONSIBILITIES:
+//   1. Input Validation & Sanitization (contact numbers, coordinates)
+//   2. Image Compression (client-side, using Canvas API)
+//   3. Geospatial Utilities (bounds checking, proximity detection)
+//   4. Centralized Application State (single source of truth)
+//   5. Security Utilities (XSS prevention via HTML escaping)
+//   6. Overlay Positioning (responsive scaling algorithm)
+//
+// DESIGN PATTERN: Shared Module / Utility Library
+//   Functions here are pure (no side effects) where possible,
+//   making them testable and reusable across mts-map.js,
+//   mts-sidebar.js, and mts-app.js.
 // ============================================
 
+// --- Geographic Bounding Box (Data Structure: Object Literal) ---
+// Defines the latitude/longitude rectangle for Jakarta.
+// Used by withinJakartaBounds() to validate pin placement and by
+// the Leaflet map to set initial view bounds.
+// Coordinates use WGS 84 (standard GPS coordinate system).
 const JAKARTA_BOUNDS = {
-  south: -6.230,
-  west: 106.720,
-  north: -6.020,
-  east: 106.980,
+  south: -6.230,  // Minimum latitude
+  west: 106.720,  // Minimum longitude
+  north: -6.020,  // Maximum latitude
+  east: 106.980,  // Maximum longitude
 };
 
+// --- Overlay Coordinate Maps ---
+// Pixel positions for navigation links on the background image.
+// Same scaling technique as app.js (see positionMapTrackingOverlay).
 const MAP_TRACKING_OVERLAY = {
   userIdX: 473,
   userIdY: 148,
@@ -30,6 +55,8 @@ const MAP_TRACKING_OVERLAY = {
   logoutH: 23,
 };
 
+// App rendering area within the background image (white content zone).
+// Computed as: x, y, width = rightEdge - x, height = bottomEdge - y - footer.
 const MTS_APP_AREA = {
   x: 332,
   y: 215,
@@ -37,22 +64,42 @@ const MTS_APP_AREA = {
   h: 911 - 215 - 28,
 };
 
+// --- Input Sanitization Functions ---
+// SECURITY: Strips non-digit characters to prevent injection and
+//   ensure clean numeric data before database storage.
+//   Uses regex \D (non-digit) with global flag for complete removal.
 function stripNonDigits(value) {
   return String(value || "").replace(/\D/g, "");
 }
 
+// --- Phone Number Normalization ---
+// ALGORITHM: Converts Indonesian phone formats to international E.164-like
+//   format with country code 62. Handles three input cases:
+//   1. Already has "62" prefix -> return as-is
+//   2. Starts with "0" (local format) -> replace leading 0 with "62"
+//   3. Other formats -> return digits only
+// This normalization ensures WhatsApp API links work correctly.
 function normalizePhone(contact) {
   if (!contact) return "";
-  let num = contact.replace(/[^0-9]/g, "");
+  let num = contact.replace(/[^0-9]/g, ""); // Strip all non-numeric
   if (num.startsWith("62")) return num;
   if (num.startsWith("0")) return "62" + num.slice(1);
   return num;
 }
 
+// --- Contact Validation ---
+// TECHNIQUE: Multi-step validation with early returns (guard clauses).
+// Returns true if valid, or an error message string if invalid.
+// This pattern lets callers check: if (result !== true) showError(result);
+//
+// VALIDATION RULES (Indonesian phone numbers):
+//   - Optional field (empty = valid)
+//   - Must contain only digits (optionally prefixed with +)
+//   - If starts with 62: min 9 digits, max 15 digits
+//   - If starts with 0: min 7 digits, max 13 digits
 function validateContact(contact) {
-  if (!contact) return true;  // optional field
-  // Strip + for validation
-  const cleaned = contact.replace(/^\+/, "");
+  if (!contact) return true;  // Optional field - empty is valid
+  const cleaned = contact.replace(/^\+/, ""); // Strip leading + for validation
   if (!/^\d+$/.test(cleaned)) return "Contact must contain only numbers (optionally starting with +)";
   if (cleaned.startsWith("62")) {
     if (cleaned.length < 9) return "Contact must be at least 9 digits with country code";
@@ -67,7 +114,22 @@ function validateContact(contact) {
   return "Contact must start with 0 or +62 (e.g. 08xx or +628xx)";
 }
 
-// Resize image to max dimension, returns a Blob (JPEG)
+// --- Client-Side Image Compression ---
+// ALGORITHM: Reads file -> creates Image -> draws to Canvas at reduced
+//   dimensions -> exports as JPEG blob.
+//
+// PIPELINE: File -> FileReader (Base64) -> Image -> Canvas -> Blob
+//   1. FileReader converts the File to a data URL (Base64 string)
+//   2. An Image element decodes the data URL
+//   3. Canvas draws the image at scaled dimensions
+//   4. canvas.toBlob() re-encodes as JPEG at 80% quality
+//
+// TECHNIQUE: Aspect-ratio-preserving downscale
+//   ratio = Math.min(maxDim / width, maxDim / height)
+//   This ensures the longest edge fits within maxDim while
+//   maintaining proportions (no distortion).
+//
+// RETURNS: Promise<Blob> - async operation wrapped in a Promise
 function resizeImage(file, maxDim = 1200) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -75,11 +137,13 @@ function resizeImage(file, maxDim = 1200) {
       const img = new Image();
       img.onload = () => {
         let w = img.width, h = img.height;
+        // Only downscale if either dimension exceeds the threshold
         if (w > maxDim || h > maxDim) {
           const ratio = Math.min(maxDim / w, maxDim / h);
           w = Math.round(w * ratio);
           h = Math.round(h * ratio);
         }
+        // HTML5 Canvas API for pixel manipulation
         const canvas = document.createElement("canvas");
         canvas.width = w;
         canvas.height = h;
@@ -92,15 +156,21 @@ function resizeImage(file, maxDim = 1200) {
   });
 }
 
-// Check for nearby existing houses (~50m threshold).
-// Returns the nearby house object or null.
+// --- Proximity Detection (Geospatial) ---
+// Uses Leaflet's distanceTo() which implements the Haversine formula
+// to compute the great-circle distance between two lat/lng points.
+// Returns the first house within 50 meters, or null.
+//
+// ALGORITHM: Linear search O(n) through all houses.
+//   For the expected data volume (~hundreds of houses), this is efficient.
+//   For larger datasets, a spatial index (e.g., R-tree) would be needed.
 function findNearbyHouse(lat, lng) {
-  if (!window.L) return null;
+  if (!window.L) return null; // Guard: Leaflet must be loaded
   const newPoint = window.L.latLng(lat, lng);
   return state.houses.find((h) => {
     if (!h.lat || !h.lng) return false;
     const existingPoint = window.L.latLng(h.lat, h.lng);
-    return newPoint.distanceTo(existingPoint) < 50; // meters
+    return newPoint.distanceTo(existingPoint) < 50; // 50-meter threshold
   }) || null;
 }
 
@@ -114,6 +184,10 @@ function delayedNavigate(targetPage, clearUserSession = false) {
   }, NAV_DELAY_MS);
 }
 
+// --- Boundary Validation (Geospatial) ---
+// Checks if a coordinate falls within the Jakarta bounding box.
+// Uses simple comparison operators (efficient O(1) check).
+// This prevents users from placing pins outside the valid area.
 function withinJakartaBounds(lat, lng) {
   return (
     lat >= JAKARTA_BOUNDS.south &&
@@ -123,6 +197,9 @@ function withinJakartaBounds(lat, lng) {
   );
 }
 
+// --- Coordinate Formatting ---
+// Converts raw numbers to a display string with fixed 6 decimal places.
+// Uses Number.isFinite() to reject NaN, Infinity, and non-numeric values.
 function formatLatLng(lat, lng) {
   const a = Number(lat);
   const b = Number(lng);
@@ -130,6 +207,8 @@ function formatLatLng(lat, lng) {
   return `${a.toFixed(6)}, ${b.toFixed(6)}`;
 }
 
+// --- DOM Element References (Cached) ---
+// Querying once at load time avoids repeated DOM traversal.
 const mapTrackingImage = document.getElementById("bgMapTrackingSystem");
 const mapTrackingOverlay = document.getElementById("mapTrackingOverlay");
 const loggedInUserIdMap = document.getElementById("loggedInUserIdMap");
@@ -139,6 +218,9 @@ const closeLinkMap = document.getElementById("closeLinkMap");
 const logoutLinkMap = document.getElementById("logoutLinkMap");
 const mtsApp = document.getElementById("mtsApp");
 
+// --- Session Verification (Authorization Guard) ---
+// Redirects unauthenticated users back to the login page.
+// This is a client-side check (not a security boundary).
 const activeUserId = window.localStorage.getItem("loggedInUserId");
 const activeUserName = window.localStorage.getItem("loggedInUserName");
 if (!activeUserId) {
@@ -153,9 +235,9 @@ if (!window.L) {
   // We still render the page, but the app will show an error.
 }
 
-// ------------------------
-// Overlay positioning
-// ------------------------
+// --- Overlay Positioning ---
+// Same responsive scaling algorithm used in app.js and dashboard.js.
+// Scales navigation elements proportionally to the background image.
 
 function positionMapTrackingOverlay() {
   if (
@@ -224,61 +306,78 @@ function positionMapTrackingOverlay() {
   mtsApp.style.height = `${MTS_APP_AREA.h * scaleY}px`;
 }
 
-// ------------------------
-// Map Tracking System App
-// ------------------------
-
+// ============================================
+// Centralized Application State
+// ============================================
+// DESIGN PATTERN: State Object Pattern (Centralized State Management)
+//   All mutable application data lives in a single "state" object.
+//   This makes it easy to inspect, debug, and reason about the
+//   current state of the application at any point in time.
+//
+// DATA STRUCTURES:
+//   houses:  Array of house objects (ordered collection)
+//   markers: ES6 Map (houseId -> Leaflet marker) for O(1) lookup
+//
+// EXTENSIBILITY: New features can add properties here without
+//   modifying existing code (Open/Closed Principle).
 const state = {
-  territory: "",
-  addMode: false,
-  selectedHouseId: null,
-  houses: [],
-  markers: new Map(),
-  highlightMarker: null,
-  map: null,
-  clusterGroup: null,
-  boundaryRect: null,
+  territory: "",            // Currently selected city
+  addMode: false,           // Whether "add pin" mode is active
+  selectedHouseId: null,    // ID of the house open in sidebar
+  houses: [],               // Array of all house records from database
+  markers: new Map(),       // Map<houseId, L.Marker> for marker management
+  highlightMarker: null,    // Temporary highlight circle on selected pin
+  map: null,                // Leaflet map instance
+  clusterGroup: null,       // MarkerClusterGroup for performance
+  boundaryRect: null,       // Jakarta boundary rectangle overlay
 };
 
+// --- UI Element References ---
+// Populated by renderShell() in mts-app.js after the DOM is built.
+// Using null initialization with later assignment follows the
+// "lazy initialization" pattern.
 const ui = {
-  shell: null,
-  territorySelect: null,
-  toggleGuideBtn: null,
-  addPinBtn: null,
-  addByCoordsBtn: null,
-  latInput: null,
-  lngInput: null,
-  guide: null,
-  tabMap: null,
-  tabProfiles: null,
-  leftPanel: null,
-  mapWrap: null,
-  profilesWrap: null,
-  cardsWrap: null,
-  searchInput: null,
-  priorityBtn: null,
-  priorityDropdown: null,
-  caseStatusBtn: null,
-  caseStatusDropdown: null,
-  typeBtn: null,
-  typeDropdown: null,
-  sortSelect: null,
-  houseCount: null,
-  toast: null,
-  sidebar: null,
-  sidebarTitle: null,
-  sidebarCloseBtn: null,
-  sidebarBody: null,
-  sidebarSaveBtn: null,
-  sidebarDeleteBtn: null,
-  modalBackdrop: null,
-  modalTitle: null,
-  modalCloseBtn: null,
-  modalBody: null,
-  modalCancelBtn: null,
-  modalSaveBtn: null,
+  shell: null,              // Main app container
+  territorySelect: null,    // City dropdown
+  toggleGuideBtn: null,     // Show/hide guide button
+  addPinBtn: null,          // "Add pin" toggle button
+  addByCoordsBtn: null,     // "Add by coordinates" button
+  latInput: null,           // Latitude input field
+  lngInput: null,           // Longitude input field
+  guide: null,              // Quick guide container
+  tabMap: null,             // Map tab button
+  tabProfiles: null,        // Profiles tab button
+  leftPanel: null,          // Left panel (topbar + content area)
+  mapWrap: null,            // Map container div
+  profilesWrap: null,       // Profiles panel container
+  cardsWrap: null,          // House cards container
+  searchInput: null,        // Search input field
+  priorityBtn: null,        // Priority filter button
+  priorityDropdown: null,   // Priority filter dropdown
+  caseStatusBtn: null,      // Case status filter button
+  caseStatusDropdown: null, // Case status filter dropdown
+  typeBtn: null,            // Type filter button
+  typeDropdown: null,       // Type filter dropdown
+  sortSelect: null,         // Sort order dropdown
+  houseCount: null,         // House count display element
+  toast: null,              // Toast notification container
+  sidebar: null,            // Sidebar panel for house details
+  sidebarTitle: null,       // Sidebar header title
+  sidebarCloseBtn: null,    // Sidebar close button
+  sidebarBody: null,        // Sidebar scrollable content
+  sidebarSaveBtn: null,     // Sidebar save button
+  sidebarDeleteBtn: null,   // Sidebar delete button
+  modalBackdrop: null,      // Modal overlay background
+  modalTitle: null,         // Modal header title
+  modalCloseBtn: null,      // Modal close button
+  modalBody: null,          // Modal content area
+  modalCancelBtn: null,     // Modal cancel button
+  modalSaveBtn: null,       // Modal save/confirm button
 };
 
+// --- Toast Notification ---
+// Displays a temporary message that auto-hides after 3 seconds.
+// Uses CSS class toggling for show/hide animation.
 function showToast(message) {
   if (!ui.toast) return;
   ui.toast.textContent = message;
@@ -286,27 +385,40 @@ function showToast(message) {
   window.setTimeout(() => ui.toast && ui.toast.classList.remove("show"), 3000);
 }
 
+// --- Guide Visibility Toggle ---
+// Toggles the Quick Guide panel and updates button label text.
 function setGuideVisible(isVisible) {
   if (!ui.guide || !ui.toggleGuideBtn) return;
   ui.guide.classList.toggle("hidden", !isVisible);
   ui.toggleGuideBtn.textContent = isVisible ? t("hide_guide") : t("show_guide");
 }
 
+// --- Tab Switching (Map / Profiles) ---
+// Shows one panel and hides the other. After switching to the map tab,
+// invalidateSize() is called with a 60ms delay to let the DOM finish
+// rendering before Leaflet recalculates tile positions.
 function setActiveTab(tab) {
   const isMap = tab === "map";
-  ui.tabMap?.classList.toggle("active", isMap);
+  ui.tabMap?.classList.toggle("active", isMap);     // Optional chaining
   ui.tabProfiles?.classList.toggle("active", !isMap);
 
   if (ui.mapWrap) ui.mapWrap.style.display = isMap ? "block" : "none";
   if (ui.profilesWrap) ui.profilesWrap.style.display = isMap ? "none" : "block";
 
   if (isMap && state.map) {
-    // ResizeObserver handles invalidateSize automatically,
-    // but we still need a manual trigger for tab switches.
+    // Leaflet needs a size recalculation after container visibility changes.
     window.setTimeout(() => state.map && state.map.invalidateSize(), 60);
   }
 }
 
+// --- XSS Prevention (Security) ---
+// TECHNIQUE: HTML Entity Encoding
+// Replaces characters that have special meaning in HTML (<, >, &, ", ')
+// with their entity equivalents. This prevents Cross-Site Scripting (XSS)
+// attacks when user-supplied data is inserted into the DOM via innerHTML.
+//
+// IMPORTANCE: Every user-input value displayed in HTML MUST pass through
+// escapeHtml() or escapeAttr() before being injected.
 function escapeHtml(value) {
   return String(value || "")
     .replaceAll("&", "&amp;")
@@ -316,7 +428,7 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+// Alias for readability — semantically marks values used in HTML attributes.
 function escapeAttr(value) {
-  // Same as escapeHtml, but kept separate for readability.
   return escapeHtml(value);
 }
