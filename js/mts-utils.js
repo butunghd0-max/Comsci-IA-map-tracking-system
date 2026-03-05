@@ -141,16 +141,6 @@ function findNearbyHouse(lat, lng) {
   }) || null;
 }
 
-function delayedNavigate(targetPage, clearUserSession = false) {
-  window.setTimeout(() => {
-    if (clearUserSession) {
-      window.localStorage.removeItem("loggedInUserId");
-      window.localStorage.removeItem("loggedInUserName");
-    }
-    window.location.href = targetPage;
-  }, NAV_DELAY_MS);
-}
-
 /** @returns {boolean} true if (lat, lng) falls inside the Jakarta bounding box. */
 function withinJakartaBounds(lat, lng) {
   return (
