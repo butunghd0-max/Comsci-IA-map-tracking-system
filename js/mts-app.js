@@ -2,26 +2,47 @@
 // mts-app.js - Application Shell & Core UI
 // ============================================
 // PURPOSE: Acts as the main entry point for the Map Tracking System.
-//   Builds the entire UI dynamically via JavaScript (no static HTML
-//   for the app body), wires up event listeners, and orchestrates
+//   Builds the entire UI dynamically via JavaScript and orchestrates
 //   the interaction between all other modules.
 //
-// MODULE RESPONSIBILITIES:
-//   1. Shell Rendering (renderShell) - generates all HTML for topbar,
-//      map container, profiles panel, sidebar, modal, and toast
-//   2. Quick Guide (tabbed, multilingual help content)
-//   3. Profile Cards (renderCards) - filterable, sortable card grid
-//   4. Filter System (multi-select dropdowns for priority/status/type)
-//   5. Export (exportToCSV) - client-side Excel export via SheetJS
-//   6. Modal System (openHouseModal/closeModal) - for house creation
-//   7. Navigation & Keyboard Shortcuts (Escape key handling)
-//   8. Online/Offline Detection (network status indicator)
+// OOP CONCEPT: Mediator Pattern
+//   This module acts as a MEDIATOR that coordinates communication
+//   between mts-map.js, mts-sidebar.js, and mts-i18n.js. The modules
+//   don't reference each other directly - they communicate through
+//   shared state and function calls defined here.
 //
-// DESIGN PATTERNS:
-//   - Template Literal Pattern (HTML templating via tagged strings)
-//   - Mediator Pattern (this module coordinates all other modules)
-//   - Strategy Pattern (sort functions selected by dropdown value)
-//   - Event Delegation (single handlers for repeated UI elements)
+// OOP CONCEPT: Template Method Pattern
+//   renderShell() defines the SKELETON of the UI structure, while
+//   individual sections (renderCards, renderGuideContent) fill in
+//   specific content. This separates structure from content.
+//
+// WEB SCIENCE: Dynamic DOM Manipulation (SPA-like Architecture)
+//   Instead of serving pre-built HTML from a server, this module
+//   generates the entire UI at runtime using innerHTML and template
+//   literals. This is a technique used in Single-Page Applications
+//   (SPAs) where JavaScript controls page rendering.
+//
+// WEB SCIENCE: Event Delegation
+//   Rather than attaching event listeners to every individual button,
+//   some handlers are attached to parent containers and use event.target
+//   to identify which child element was clicked. This reduces memory
+//   usage and handles dynamically created elements.
+//
+// FUNCTIONAL PROGRAMMING:
+//   - Array.filter() for search/filter (predicate function)
+//   - Array.sort() with comparator functions (STRATEGY PATTERN)
+//   - Template Literals (tagged strings) for HTML generation
+//   - Closures in event handlers capture surrounding scope
+//
+// WEB SCIENCE: Keyboard Events & Accessibility
+//   The Escape key handler provides keyboard navigation (WCAG 2.1).
+//   window.addEventListener("keydown") uses the OBSERVER PATTERN to
+//   listen for keyboard input at the document level.
+//
+// WEB SCIENCE: Network Detection (Navigator API)
+//   Online/offline event listeners detect connectivity changes,
+//   allowing the UI to show a network status indicator. This uses
+//   the navigator.onLine property and window online/offline events.
 //
 // DATA FLOW:
 //   renderShell() -> wire events -> setTerritory() -> refreshHouses()

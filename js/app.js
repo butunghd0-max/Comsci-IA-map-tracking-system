@@ -1,25 +1,35 @@
 // ============================================
-// app.js — Login Page Controller
+// app.js - Login Page Controller
 // ============================================
 // PURPOSE: Authenticates volunteers against the Supabase "volunteers"
 //          table and redirects to the Dashboard on success.
 //
-// ARCHITECTURE: "Smoke and Mirrors" Overlay Pattern
-//   The login page displays a background image (bg-login.png) that looks
-//   like the organization's legacy system. Transparent HTML <input> fields
-//   and buttons are positioned ON TOP of the image using absolute pixel
-//   coordinates, dynamically scaled to match the rendered image size.
-//   This creates the illusion of interacting with the original system.
+// OOP CONCEPT: MVC Architecture
+//   - MODEL: Supabase "volunteers" table (data layer)
+//   - VIEW: HTML form elements positioned over the background image
+//   - CONTROLLER: This script - mediates between user input and data
 //
-// DESIGN PATTERNS USED:
-//   - Observer Pattern (event listeners for user interactions)
-//   - Defensive Programming (null checks, disabled states, guard clauses)
-//   - Asynchronous Control Flow (async/await for Supabase queries)
-//   - Session Management (localStorage for client-side session state)
+// OOP CONCEPT: Event-Driven Programming
+//   The entire login flow is driven by DOM events:
+//   - "submit" event triggers credential verification
+//   - "pointerdown"/"pointerup" events toggle password visibility
+//   - "resize" event repositions the overlay
+//   This follows the OBSERVER PATTERN where the browser emits events
+//   and registered handlers (callbacks) respond to them.
+//
+// WEB SCIENCE: Form Submission & HTTP
+//   HTML forms traditionally send data via HTTP POST. This app uses
+//   event.preventDefault() to INTERCEPT the form submission and handle
+//   authentication via JavaScript (Supabase REST API) instead.
+//   This is the foundation of modern AJAX-based web applications.
+//
+// WEB SCIENCE: Browser Object Model (BOM)
+//   window.setTimeout, window.localStorage, window.location are all
+//   BOM APIs. The BOM provides JavaScript access to browser features
+//   beyond the DOM (timers, storage, navigation, screen info).
 //
 // SECURITY NOTE: Passwords are compared in plaintext via Supabase query.
-//   In a production system, passwords should be hashed server-side using
-//   bcrypt or Supabase Auth. This is noted as a limitation in the IA.
+//   In a production system, passwords should be hashed server-side.
 // ============================================
 
 // Dependencies: config.js provides SUPABASE_URL, SUPABASE_ANON_KEY,
@@ -210,11 +220,17 @@ form.addEventListener("submit", async (event) => {
   showStatus("Checking credentials...", "");
   loginButton.disabled = true;
 
-  // --- Supabase Query (REST API under the hood) ---
-  // .from("volunteers") targets the volunteers table.
-  // .select("user_id,name") limits returned columns (optimization).
-  // .eq() filters by exact match — equivalent to SQL WHERE clause.
-  // .maybeSingle() returns null instead of error if no row matches.
+  // --- Supabase Query (CRUD: Read Operation) ---
+  // WEB SCIENCE: REST API Request
+  //   This translates to: GET /rest/v1/volunteers?user_id=eq.X&password=eq.Y
+  //   The Supabase client ABSTRACTS this HTTP request behind a
+  //   fluent (chainable) API - each method returns `this` for chaining.
+  //
+  // FUNCTIONAL PROGRAMMING: Destructuring Assignment
+  //   { data, error } extracts two properties from the response object.
+  //
+  // .maybeSingle() returns null (not an error) if no row matches,
+  //   which is safer than .single() which would throw on zero results.
   const { data, error } = await supabaseClient
     .from("volunteers")
     .select("user_id,name")

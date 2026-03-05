@@ -2,21 +2,31 @@
 // mts-utils.js - Utilities, State, and UI References
 // ============================================
 // PURPOSE: Provides shared utility functions, application state,
-//   UI element references, and the overlay positioning logic for
-//   the Map Tracking System page.
+//   UI element references, and the overlay positioning logic.
 //
-// MODULE RESPONSIBILITIES:
-//   1. Input Validation & Sanitization (contact numbers, coordinates)
-//   2. Image Compression (client-side, using Canvas API)
-//   3. Geospatial Utilities (bounds checking, proximity detection)
-//   4. Centralized Application State (single source of truth)
-//   5. Security Utilities (XSS prevention via HTML escaping)
-//   6. Overlay Positioning (responsive scaling algorithm)
+// OOP CONCEPT: Separation of Concerns (SoC)
+//   This module separates UTILITY LOGIC from UI rendering and user
+//   interaction. Each function has a single responsibility (SRP).
+//   Functions are PURE where possible - given the same input, they
+//   always return the same output with no side effects.
 //
-// DESIGN PATTERN: Shared Module / Utility Library
-//   Functions here are pure (no side effects) where possible,
-//   making them testable and reusable across mts-map.js,
-//   mts-sidebar.js, and mts-app.js.
+// OOP CONCEPT: Composition over Inheritance
+//   Instead of using class hierarchies, this project composes behavior
+//   by combining simple functions. For example, validateContact()
+//   uses stripNonDigits() internally - this is FUNCTION COMPOSITION.
+//
+// FUNCTIONAL PROGRAMMING:
+//   - PURE FUNCTIONS: stripNonDigits, normalizePhone, formatLatLng
+//     produce outputs solely from their inputs (no side effects).
+//   - HIGHER-ORDER FUNCTIONS: Array.find() in findNearbyHouse takes
+//     a predicate function as an argument.
+//   - IMMUTABILITY: const declarations prevent reassignment.
+//
+// WEB SCIENCE: Document Object Model (DOM)
+//   The DOM is a tree-structured OBJECT REPRESENTATION of the HTML
+//   document. JavaScript accesses and manipulates it via the DOM API
+//   (getElementById, querySelector, etc.). This module caches DOM
+//   references for performance (avoids repeated tree traversal).
 // ============================================
 
 // --- Geographic Bounding Box (Data Structure: Object Literal) ---
@@ -115,21 +125,26 @@ function validateContact(contact) {
 }
 
 // --- Client-Side Image Compression ---
-// ALGORITHM: Reads file -> creates Image -> draws to Canvas at reduced
-//   dimensions -> exports as JPEG blob.
+// WEB SCIENCE: File API & Canvas API
+//   The browser provides Web APIs for file handling:
+//   - FileReader API: reads file contents asynchronously
+//   - Canvas API: provides 2D pixel manipulation
+//   - Blob API: represents raw binary data
 //
-// PIPELINE: File -> FileReader (Base64) -> Image -> Canvas -> Blob
-//   1. FileReader converts the File to a data URL (Base64 string)
-//   2. An Image element decodes the data URL
-//   3. Canvas draws the image at scaled dimensions
+// ALGORITHM: Read -> Decode -> Scale -> Re-encode
+//   1. FileReader converts File to data URL (Base64 encoding)
+//   2. Image element decodes the Base64 string into pixels
+//   3. Canvas draws at scaled dimensions (aspect-ratio preserving)
 //   4. canvas.toBlob() re-encodes as JPEG at 80% quality
 //
-// TECHNIQUE: Aspect-ratio-preserving downscale
-//   ratio = Math.min(maxDim / width, maxDim / height)
-//   This ensures the longest edge fits within maxDim while
-//   maintaining proportions (no distortion).
+// OOP CONCEPT: Abstraction
+//   This function ABSTRACTS a complex multi-step pipeline into a
+//   single async call. Callers simply await resizeImage(file) without
+//   knowing about FileReader, Canvas, or Blob internals.
 //
-// RETURNS: Promise<Blob> - async operation wrapped in a Promise
+// FUNCTIONAL PROGRAMMING: Promise
+//   Returns a Promise<Blob>, enabling async/await syntax.
+//   Promises represent the eventual completion of an async operation.
 function resizeImage(file, maxDim = 1200) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -309,17 +324,28 @@ function positionMapTrackingOverlay() {
 // ============================================
 // Centralized Application State
 // ============================================
-// DESIGN PATTERN: State Object Pattern (Centralized State Management)
-//   All mutable application data lives in a single "state" object.
-//   This makes it easy to inspect, debug, and reason about the
-//   current state of the application at any point in time.
+// OOP CONCEPT: Encapsulation (State Object)
+//   All mutable application data is ENCAPSULATED in a single `state`
+//   object. This acts as the application's "model" in MVC architecture.
+//   Rather than scattering variables throughout modules, centralizing
+//   state makes the application easier to debug, test, and reason about.
+//
+// OOP CONCEPT: Composition
+//   The state object COMPOSES multiple data types:
+//   - Primitive types (string, boolean, null)
+//   - Collection types (Array, Map)
+//   - Object references (Leaflet map instance)
+//   This demonstrates JavaScript's COMPOSITIONAL OBJECT MODEL.
 //
 // DATA STRUCTURES:
-//   houses:  Array of house objects (ordered collection)
-//   markers: ES6 Map (houseId -> Leaflet marker) for O(1) lookup
+//   houses:  Array (ordered, indexed, iterable)
+//   markers: ES6 Map (key-value pairs with O(1) lookup)
+//   The choice of Map over a plain object allows any key type
+//   and guarantees insertion order.
 //
-// EXTENSIBILITY: New features can add properties here without
-//   modifying existing code (Open/Closed Principle).
+// EXTENSIBILITY (Open/Closed Principle):
+//   New features can add properties to state without modifying
+//   existing code that reads from it.
 const state = {
   territory: "",            // Currently selected city
   addMode: false,           // Whether "add pin" mode is active
@@ -412,13 +438,21 @@ function setActiveTab(tab) {
 }
 
 // --- XSS Prevention (Security) ---
-// TECHNIQUE: HTML Entity Encoding
-// Replaces characters that have special meaning in HTML (<, >, &, ", ')
-// with their entity equivalents. This prevents Cross-Site Scripting (XSS)
-// attacks when user-supplied data is inserted into the DOM via innerHTML.
+// WEB SCIENCE: Cross-Site Scripting (XSS)
+//   XSS is a security vulnerability where an attacker injects malicious
+//   scripts into web pages viewed by other users. This happens when
+//   user-supplied data (e.g., house names) is inserted into innerHTML
+//   without sanitization.
 //
-// IMPORTANCE: Every user-input value displayed in HTML MUST pass through
-// escapeHtml() or escapeAttr() before being injected.
+// TECHNIQUE: HTML Entity Encoding
+//   Replaces characters that have special meaning in HTML (<, >, &, ", ')
+//   with their entity equivalents (&lt;, &gt;, etc.). This ensures the
+//   browser renders them as TEXT rather than executing them as HTML.
+//
+// FUNCTIONAL PROGRAMMING: Method Chaining
+//   String.replaceAll() calls are chained together. Each call returns
+//   a new string (strings are IMMUTABLE in JavaScript), enabling
+//   successive transformations in a single expression.
 function escapeHtml(value) {
   return String(value || "")
     .replaceAll("&", "&amp;")

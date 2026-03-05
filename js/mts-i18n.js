@@ -5,21 +5,29 @@
 //   All user-facing strings are stored in a centralized lookup table
 //   (I18N object) and retrieved via the t() translation function.
 //
+// OOP CONCEPT: Encapsulation & Information Hiding
+//   The translation data (I18N) is encapsulated in a single object.
+//   Other modules interact with it only through the t() function,
+//   which acts as a PUBLIC INTERFACE (getter method). The internal
+//   data structure is hidden from consumers - they don't need to know
+//   whether translations are stored in an object, array, or database.
+//
+// OOP CONCEPT: Polymorphism (Duck Typing)
+//   Functions like priorityLabel() and caseStatusLabel() accept any
+//   string input and return the appropriate translated label. The same
+//   function call produces different outputs based on the input value -
+//   this is a form of PARAMETRIC POLYMORPHISM.
+//
 // DATA STRUCTURE: Nested Object Literal (Hash Map / Dictionary)
 //   I18N uses a two-level key structure:
 //     I18N[translationKey][languageCode] -> translated string
 //   This provides O(1) constant-time lookup for any translation.
 //
-// DESIGN PATTERN: Lookup Table / Dictionary Pattern
-//   Instead of scattering if/else chains for each language throughout
-//   the codebase, all translations are centralized here. Adding a new
-//   language only requires adding a new property to each entry.
-//
-// SUPPORTED LANGUAGES:
-//   en    - English (default)
-//   id    - Bahasa Indonesia
-//   zh_cn - Simplified Chinese
-//   zh_tw - Traditional Chinese
+// WEB SCIENCE: Character Encoding (UTF-8)
+//   HTML files use <meta charset="UTF-8"> to support Chinese characters
+//   and special symbols. JavaScript strings are internally UTF-16,
+//   but UTF-8 encoding in the source file allows direct use of
+//   multibyte characters (e.g., "地图追踪系统").
 //
 // EXTENSIBILITY: To add a new language (e.g., Japanese):
 //   1. Add { ja: "日本語" } to the LANGS object
@@ -36,8 +44,11 @@ const LANGS = {
   zh_tw: "繁體中文",
 };
 
-// Current language is persisted in localStorage for session continuity.
-// Falls back to English ("en") if no preference has been saved.
+// WEB SCIENCE: Client-Side Persistence (Web Storage API)
+// The user's language preference is persisted in localStorage.
+// This survives page reloads and browser restarts, providing a
+// seamless experience without server-side session management.
+// The || operator provides a FALLBACK VALUE (short-circuit evaluation).
 let currentLang = window.localStorage.getItem("mtsLang") || "en";
 // --- Master Translation Table ---
 // Each key maps to an object of { languageCode: translatedString }.

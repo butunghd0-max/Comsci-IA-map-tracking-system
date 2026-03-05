@@ -2,16 +2,27 @@
 // dashboard.js - Main Dashboard Controller
 // ============================================
 // PURPOSE: Manages the main dashboard page after login.
-//   Displays the logged-in user's name and provides navigation
-//   to Public Activities (dashboard2) and Logout.
+//   Displays the logged-in user's name and provides navigation.
 //
-// ARCHITECTURE: Same "Smoke and Mirrors" overlay pattern as app.js.
-//   Background image shows the legacy system UI; transparent clickable
-//   elements are positioned over the image using scaled coordinates.
+// OOP CONCEPT: Separation of Concerns
+//   Each page has its own controller script (app.js for login,
+//   dashboard.js for this page). This separates page-specific logic
+//   into independent modules, following the MODULAR DESIGN principle.
 //
-// SESSION: Reads loggedInUserId/loggedInUserName from localStorage.
-//   If no userId exists, immediately redirects to the login page
-//   (client-side authorization guard).
+// OOP CONCEPT: Event-Driven Programming
+//   Navigation links use click event listeners rather than <a href>.
+//   This gives JavaScript full control over the navigation flow,
+//   allowing for delayed transitions and session cleanup.
+//
+// WEB SCIENCE: Responsive Design (Algorithmic Scaling)
+//   positionDashboardOverlay() implements a SCALING ALGORITHM that
+//   maps pixel coordinates from the source image to the rendered size.
+//   This is a form of COORDINATE TRANSFORMATION using ratio-based math.
+//
+// WEB SCIENCE: Session Verification
+//   Checks localStorage for session tokens before allowing access.
+//   This is a CLIENT-SIDE AUTHORIZATION GUARD - it prevents unauthorized
+//   UI access but is NOT a security boundary (server-side RLS provides that).
 // ============================================
 
 // Dependencies: config.js provides LOGIN_PAGE, DASHBOARD2_PAGE,

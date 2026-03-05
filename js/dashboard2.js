@@ -2,15 +2,30 @@
 // dashboard2.js - Public Activities Dashboard Controller
 // ============================================
 // PURPOSE: Manages the "Public Activities" dashboard page.
-//   Provides navigation to the Map Tracking System, back to the
-//   main dashboard, and logout functionality.
+//   Provides navigation to the Map Tracking System and logout.
 //
-// ARCHITECTURE: Same "Smoke and Mirrors" overlay pattern.
-//   Transparent clickable regions are positioned over a background
-//   image using proportional scaling (positionDashboard2Overlay).
+// OOP CONCEPT: Code Reuse (DRY)
+//   This controller follows the SAME PATTERN as dashboard.js:
+//   overlay coordinates + scaling function + event listeners.
+//   The shared delayedNavigate() function from config.js avoids
+//   duplicating navigation logic (DRY principle).
 //
-// SESSION: Same localStorage-based session check as dashboard.js.
-//   Unauthorized users are redirected to the login page.
+// OOP CONCEPT: Modular Architecture
+//   The app is split into multiple HTML pages, each with its own
+//   controller script. This demonstrates MODULAR DECOMPOSITION -
+//   dividing a complex system into manageable, independent modules.
+//
+// WEB SCIENCE: Multi-Page Application (MPA) Architecture
+//   Unlike a SPA (Single-Page Application), this app uses separate
+//   HTML pages connected via URL navigation. Each page load is a
+//   full HTTP request-response cycle (GET /dashboard2.html).
+//   The tradeoff: simpler architecture but no client-side routing.
+//
+// WEB SCIENCE: Session Persistence Across Pages
+//   localStorage data persists across page navigations within the
+//   same ORIGIN (protocol + domain + port). This allows the user's
+//   login state to be shared between index.html, dashboard.html,
+//   dashboard2.html, and maptrackingsystem.html without cookies.
 // ============================================
 
 // Dependencies: config.js provides LOGIN_PAGE, DASHBOARD_PAGE,

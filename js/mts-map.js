@@ -2,18 +2,36 @@
 // mts-map.js - Map Engine (Leaflet Integration)
 // ============================================
 // PURPOSE: Initializes and manages the Leaflet.js map, including tile
-//   layers, marker rendering, clustering, boundary overlay, and all
-//   map-based user interactions (click to add, click to view details).
+//   layers, marker rendering, clustering, and map interactions.
 //
-// EXTERNAL DEPENDENCIES:
-//   - Leaflet.js (L) - open-source JavaScript mapping library
-//   - Leaflet.markercluster - plugin for marker clustering
-//   - Supabase client - for fetching house data from PostgreSQL
+// OOP CONCEPT: Inheritance & Class Extension
+//   Leaflet.js uses PROTOTYPAL INHERITANCE extensively. For example:
+//   - L.CircleMarker inherits from L.Path -> L.Layer -> L.Evented
+//   - L.Control.extend() creates a new class that INHERITS from L.Control
+//   - The custom refresh button (L.Control.extend) demonstrates
+//     SUBCLASSING - overriding the onAdd() method (METHOD OVERRIDING).
 //
-// DESIGN PATTERNS:
-//   - Controller Pattern (setTerritory orchestrates map + data flow)
-//   - Observer Pattern (Leaflet event listeners for map interactions)
-//   - Builder Pattern (initMap builds the map layer by layer)
+// OOP CONCEPT: Event-Driven Architecture
+//   Leaflet's event system follows the OBSERVER PATTERN (also called
+//   Publish-Subscribe). The map object is a SUBJECT that NOTIFIES
+//   registered OBSERVERS (event handlers) when events occur:
+//   - map.on("click", handler) registers an observer
+//   - User clicking the map triggers the notification
+//   This DECOUPLES the event source from the response logic.
+//
+// WEB SCIENCE: Tile-Based Map Rendering
+//   Web maps use TILE SERVERS that serve 256x256px image tiles.
+//   The browser requests tiles via HTTP GET based on the current
+//   zoom level and viewport bounds (lazy loading by geographic area).
+//   OpenStreetMap tiles use the URL pattern: /{z}/{x}/{y}.png
+//   where z=zoom, x=column, y=row in a global tile grid.
+//
+// WEB SCIENCE: Asynchronous Data Fetching
+//   refreshHouses() uses async/await to fetch data from Supabase.
+//   Under the hood, Supabase's JS client sends HTTP REST requests.
+//   The JavaScript EVENT LOOP ensures the UI stays responsive during
+//   network I/O - the browser can still respond to clicks while
+//   waiting for the server response.
 //
 // KEY DATA FLOW:
 //   setTerritory() -> initMap() -> refreshHouses() -> renderMarkers()
@@ -245,17 +263,22 @@ function initMap() {
   });
 }
 
-// --- Data Refresh (Supabase REST Query) ---
-// Fetches all houses from the database, normalizes their fields,
-// and triggers re-rendering of both markers and profile cards.
+// --- Data Refresh (CRUD: Read Operation) ---
+// WEB SCIENCE: REST API & HTTP
+//   Supabase exposes a RESTful API. This query translates to:
+//   GET /rest/v1/houses?select=id,name,...&order=created_at.desc
+//   The response is JSON (JavaScript Object Notation), which is
+//   natively parsed into JavaScript objects.
 //
-// QUERY: SELECT with explicit column list (optimization - avoids
-//   transferring unnecessary data over the network).
-// ORDERING: created_at DESC (newest first).
+// FUNCTIONAL PROGRAMMING: Destructuring Assignment
+//   const { data, error } = await ... extracts specific properties
+//   from the response object into separate variables.
 //
-// POST-PROCESSING: Each record is normalized via spread operator (...h)
-//   with overwritten status and priority fields to ensure consistent
-//   internal values regardless of how data was stored.
+// FUNCTIONAL PROGRAMMING: Array.map() with Spread Operator
+//   state.houses = data.map(h => ({ ...h, status: normalize(h.status) }))
+//   - Array.map() is a HIGHER-ORDER FUNCTION that transforms each element
+//   - The SPREAD OPERATOR (...h) creates a SHALLOW COPY of each object
+//   - Overwritten properties (status, priority) are normalized in-place
 async function refreshHouses() {
   if (!supabaseClient) return;
 
