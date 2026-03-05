@@ -1,6 +1,9 @@
 /* ------------------------------
-   Map Tracking System UI
------------------------------- */
+   mts.css — Map Tracking System UI
+   Styles for the MTS shell, topbar, map panel, profile cards,
+   sidebar editor, modal, toast, and quick guide.
+   All layout is inside the white content area of the background image.
+   ------------------------------ */
 
 .mts-app {
   position: absolute;

@@ -2,8 +2,14 @@
 -- Supabase Setup Script for Map Tracking System
 -- Run this in: Supabase Dashboard → SQL Editor
 -- ============================================
+-- Creates the schema (tables, constraints, RLS policies) and a
+-- storage bucket for photo uploads.  Test data is included at the
+-- bottom — remove before going live.
+-- ============================================
 
--- 1. Create the 'volunteers' table for login
+-- volunteers: pre-registered internal accounts (no public signup).
+-- SECURITY NOTE: demo stores passwords in plaintext.  In production,
+-- use Supabase Auth or store hashed passwords + compare server-side.
 CREATE TABLE volunteers (
   user_id TEXT PRIMARY KEY,
   password TEXT NOT NULL,
@@ -23,7 +29,10 @@ INSERT INTO volunteers (user_id, password, name) VALUES
   ('2016040203', 'HQJakut1TzuChi', 'Admin Volunteer 9'),
   ('2016040204', 'HQJakut1TzuChi', 'Admin Volunteer 10');
 
--- 2. Create the 'houses' table
+-- houses: core domain table — each row is a visit target shown on the map.
+-- CHECK constraints lock status/priority/type to fixed labels so that
+-- UI filters and colour-coding stay consistent with the database.
+-- links and photos use JSONB arrays for flexible, schema-less storage.
 CREATE TABLE houses (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
@@ -39,8 +48,8 @@ CREATE TABLE houses (
   doc_name TEXT,
   sheet_link TEXT,
   sheet_name TEXT,
-  links JSONB DEFAULT '[]',
-  photos JSONB DEFAULT '[]',
+  links JSONB DEFAULT '[]',       -- array of { name, url } objects
+  photos JSONB DEFAULT '[]',      -- array of { url, path, name, caption }
   last_modified_by TEXT,
   last_modified_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
@@ -203,7 +212,12 @@ UPDATE houses SET last_visit_date = CURRENT_DATE - (floor(random() * 60 + 30))::
 -- new case and closed houses have no last_visit_date (NULL = never visited)
 
 
--- 3. Set up Security Policies
+-- ============================================
+-- Row Level Security (RLS)
+-- ============================================
+-- RLS is enabled so the anon key can only do what policies allow.
+-- Currently all operations are public (demo).  For production,
+-- restrict writes to authenticated users only.
 ALTER TABLE volunteers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE houses ENABLE ROW LEVEL SECURITY;
 
@@ -213,10 +227,13 @@ CREATE POLICY "Allow public insert on houses" ON houses FOR INSERT WITH CHECK (t
 CREATE POLICY "Allow public update on houses" ON houses FOR UPDATE USING (true);
 CREATE POLICY "Allow public delete on houses" ON houses FOR DELETE USING (true);
 
--- 4. Create Storage bucket for house photos
+-- ============================================
+-- Storage bucket for house photos
+-- ============================================
+-- Public bucket — photos are accessible without auth tokens.
+-- The JS client compresses images before upload (see resizeImage in mts-utils.js).
 INSERT INTO storage.buckets (id, name, public) VALUES ('house-photos', 'house-photos', true);
 
--- Allow anyone to upload/read/delete photos
 CREATE POLICY "Allow public upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'house-photos');
 CREATE POLICY "Allow public read" ON storage.objects FOR SELECT USING (bucket_id = 'house-photos');
 CREATE POLICY "Allow public update" ON storage.objects FOR UPDATE USING (bucket_id = 'house-photos');
