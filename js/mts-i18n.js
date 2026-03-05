@@ -1,42 +1,16 @@
 // ============================================
-// mts-i18n.js - Internationalization (i18n) Module
+// mts-i18n.js — Internationalization
 // ============================================
-// PURPOSE: Provides multilingual support for the Map Tracking System.
-//   All user-facing strings are stored in a centralized lookup table
-//   (I18N object) and retrieved via the t() translation function.
+// Stores all user-facing strings in a lookup table (I18N) keyed by
+// translation key then language code: I18N[key][lang] → string.
+// Every module retrieves text through the t() helper.
 //
-// OOP CONCEPT: Encapsulation & Information Hiding
-//   The translation data (I18N) is encapsulated in a single object.
-//   Other modules interact with it only through the t() function,
-//   which acts as a PUBLIC INTERFACE (getter method). The internal
-//   data structure is hidden from consumers - they don't need to know
-//   whether translations are stored in an object, array, or database.
+// Supported languages: en, id (Bahasa), zh_cn, zh_tw.
 //
-// OOP CONCEPT: Polymorphism (Duck Typing)
-//   Functions like priorityLabel() and caseStatusLabel() accept any
-//   string input and return the appropriate translated label. The same
-//   function call produces different outputs based on the input value -
-//   this is a form of PARAMETRIC POLYMORPHISM.
-//
-// DATA STRUCTURE: Nested Object Literal (Hash Map / Dictionary)
-//   I18N uses a two-level key structure:
-//     I18N[translationKey][languageCode] -> translated string
-//   This provides O(1) constant-time lookup for any translation.
-//
-// WEB SCIENCE: Character Encoding (UTF-8)
-//   HTML files use <meta charset="UTF-8"> to support Chinese characters
-//   and special symbols. JavaScript strings are internally UTF-16,
-//   but UTF-8 encoding in the source file allows direct use of
-//   multibyte characters (e.g., "地图追踪系统").
-//
-// EXTENSIBILITY: To add a new language (e.g., Japanese):
-//   1. Add { ja: "日本語" } to the LANGS object
-//   2. Add a "ja" property to each I18N entry
-//   3. The language selector in the UI auto-populates from LANGS
+// Extensibility: to add a language, add it to LANGS and add a
+// property to every I18N entry.  The language selector auto-populates.
 // ============================================
 
-// Registry of available languages (key = code, value = display name).
-// Used to dynamically generate the language <select> dropdown.
 const LANGS = {
   en: "English",
   id: "Bahasa",
@@ -44,15 +18,10 @@ const LANGS = {
   zh_tw: "繁體中文",
 };
 
-// WEB SCIENCE: Client-Side Persistence (Web Storage API)
-// The user's language preference is persisted in localStorage.
-// This survives page reloads and browser restarts, providing a
-// seamless experience without server-side session management.
-// The || operator provides a FALLBACK VALUE (short-circuit evaluation).
+// Persisted in localStorage so the choice survives page reloads.
 let currentLang = window.localStorage.getItem("mtsLang") || "en";
-// --- Master Translation Table ---
-// Each key maps to an object of { languageCode: translatedString }.
-// Organized by UI section for maintainability.
+
+// Translations organised by UI section.
 const I18N = {
   // Topbar
   title:            { en: "Map Tracking System", id: "Map Tracking System", zh_cn: "地图追踪系统", zh_tw: "地圖追蹤系統" },
@@ -173,25 +142,20 @@ const I18N = {
   refresh_houses:   { en: "Refresh houses", id: "Segarkan rumah", zh_cn: "刷新房屋", zh_tw: "重新整理房屋" },
 };
 
-// --- Translation Function ---
-// t(key) is the primary API for the entire application.
-// ALGORITHM: Look up the key in I18N, then retrieve the string for
-//   the current language. Falls back to Indonesian ("id"), then to
-//   the key itself as a last resort (fail-safe).
-//
-// TIME COMPLEXITY: O(1) - direct property access on object literals.
+/**
+ * Look up a translated string for the current language.
+ * Falls back to Indonesian, then to the raw key.
+ * @param {string} key - Translation key (must exist in I18N).
+ * @returns {string} Translated text, or the key itself if not found.
+ */
 function t(key) {
   const entry = I18N[key];
-  if (!entry) return key; // Key not found - return key as fallback
+  if (!entry) return key;
   return entry[currentLang] || entry["id"] || key;
 }
 
-// --- Factory Functions for Dropdown Options ---
-// DESIGN PATTERN: Factory Pattern
-// These functions return freshly constructed arrays each time they are
-// called, ensuring labels reflect the current language (since t() reads
-// currentLang at call time). This avoids stale translations when the
-// user switches languages mid-session.
+// Built fresh each call so labels match the current language.
+/** @returns {{ value: string, label: string }[]} */
 function getCaseStatusOptions() {
   return [
     { value: "new case", label: t("new_case") },
@@ -217,25 +181,23 @@ function getTypeOptions() {
   ];
 }
 
-// --- Priority-to-Color Mapping ---
-// Maps priority levels to hex color codes for map pin markers.
-// Uses a series of guard clauses with an implicit default (normal = yellow).
-// This mapping is used by both the Leaflet marker layer and the profile cards.
+/**
+ * Map a priority level to its marker colour.
+ * @param {string} priority - "urgent", "normal", or "stable".
+ * @returns {string} Hex colour code.
+ */
 function priorityToColor(priority) {
-  const p = String(priority || "").toLowerCase(); // Normalize input
-  if (p === "urgent") return "#d64545";  // Red
-  if (p === "stable") return "#2f9e44";  // Green
-  return "#caa52a"; // Yellow (default: normal)
+  const p = String(priority || "").toLowerCase();
+  if (p === "urgent") return "#d64545";
+  if (p === "stable") return "#2f9e44";
+  return "#caa52a"; // default: normal
 }
 
-// --- Data Normalization Functions ---
-// PURPOSE: Ensure database values are mapped to a canonical set of
-//   internal identifiers, regardless of casing or partial matches.
-//   This is crucial for filtering and comparison operations.
-//
-// TECHNIQUE: Fuzzy string matching using String.includes()
-//   Handles variations like "Active Care", "active", "ACTIVE_CARE" etc.
-//   Falls back to "new case" if no pattern matches (safe default).
+/**
+ * Normalize a raw priority string to one of: "urgent", "normal", "stable".
+ * @param {string} priority
+ * @returns {string}
+ */
 function normalizePriority(priority) {
   const p = String(priority || "").toLowerCase();
   if (p === "urgent") return "urgent";
@@ -243,27 +205,29 @@ function normalizePriority(priority) {
   return "normal";
 }
 
+/**
+ * Normalize a raw case-status string using fuzzy matching (includes()).
+ * Handles variations like "Active Care", "active", "ACTIVE_CARE".
+ * @param {string} status
+ * @returns {string} One of: "new case", "active care", "follow-up", "closed".
+ */
 function normalizeCaseStatus(status) {
   const s = String(status || "").toLowerCase();
   if (s.includes("new")) return "new case";
   if (s.includes("active") || s.includes("care")) return "active care";
   if (s.includes("follow")) return "follow-up";
   if (s.includes("close") || s.includes("done")) return "closed";
-  return "new case"; // Safe default
+  return "new case";
 }
 
-// --- Type Translation ---
-// Converts a house type string (e.g., "Nursing Home") to its i18n key
-// ("nursing_home") using regex replacement, then looks up the translation.
+/** Convert a house type (e.g. "Nursing Home") to its translated label. */
 function translateType(type) {
   if (!type) return "";
   const key = type.toLowerCase().replace(/\s+/g, "_");
   return t(key) || type;
 }
 
-// --- Label Generators ---
-// Produce human-readable, translated labels for display in the UI.
-// These wrap normalization + translation in a single call (Facade Pattern).
+/** @returns {string} Translated priority label for UI display. */
 function priorityLabel(priority) {
   const p = normalizePriority(priority);
   if (p === "urgent") return t("urgent");

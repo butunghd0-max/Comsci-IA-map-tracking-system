@@ -1,48 +1,20 @@
 // ============================================
-// mts-map.js - Map Engine (Leaflet Integration)
+// mts-map.js — Map Engine (Leaflet.js)
 // ============================================
-// PURPOSE: Initializes and manages the Leaflet.js map, including tile
-//   layers, marker rendering, clustering, and map interactions.
+// Initializes the Leaflet map, renders markers (clustered), handles
+// map clicks (add-pin mode), and refreshes house data from Supabase.
 //
-// OOP CONCEPT: Inheritance & Class Extension
-//   Leaflet.js uses PROTOTYPAL INHERITANCE extensively. For example:
-//   - L.CircleMarker inherits from L.Path -> L.Layer -> L.Evented
-//   - L.Control.extend() creates a new class that INHERITS from L.Control
-//   - The custom refresh button (L.Control.extend) demonstrates
-//     SUBCLASSING - overriding the onAdd() method (METHOD OVERRIDING).
+// Depends on: Leaflet.js (L), Leaflet.markercluster, Supabase client,
+//             mts-utils.js (state, ui, JAKARTA_BOUNDS), mts-i18n.js.
 //
-// OOP CONCEPT: Event-Driven Architecture
-//   Leaflet's event system follows the OBSERVER PATTERN (also called
-//   Publish-Subscribe). The map object is a SUBJECT that NOTIFIES
-//   registered OBSERVERS (event handlers) when events occur:
-//   - map.on("click", handler) registers an observer
-//   - User clicking the map triggers the notification
-//   This DECOUPLES the event source from the response logic.
-//
-// WEB SCIENCE: Tile-Based Map Rendering
-//   Web maps use TILE SERVERS that serve 256x256px image tiles.
-//   The browser requests tiles via HTTP GET based on the current
-//   zoom level and viewport bounds (lazy loading by geographic area).
-//   OpenStreetMap tiles use the URL pattern: /{z}/{x}/{y}.png
-//   where z=zoom, x=column, y=row in a global tile grid.
-//
-// WEB SCIENCE: Asynchronous Data Fetching
-//   refreshHouses() uses async/await to fetch data from Supabase.
-//   Under the hood, Supabase's JS client sends HTTP REST requests.
-//   The JavaScript EVENT LOOP ensures the UI stays responsive during
-//   network I/O - the browser can still respond to clicks while
-//   waiting for the server response.
-//
-// KEY DATA FLOW:
-//   setTerritory() -> initMap() -> refreshHouses() -> renderMarkers()
+// Data flow: setTerritory() → initMap() → refreshHouses() → renderMarkers()
 // ============================================
 
-// --- Territory Selection Controller ---
-// ASYNC: Fetches house data from Supabase when a city is selected.
-// Acts as the main controller for the map module, coordinating:
-// 1. UI state (enable/disable buttons and tabs)
-// 2. Map initialization (lazy - only on first selection)
-// 3. Data loading (refreshHouses from Supabase)
+/**
+ * Called when the user picks a city from the dropdown.
+ * Enables/disables UI controls, lazy-inits the map, fetches data.
+ * @param {string} value - City identifier (currently only "jakarta").
+ */
 async function setTerritory(value) {
   state.territory = value;
 
@@ -263,22 +235,11 @@ function initMap() {
   });
 }
 
-// --- Data Refresh (CRUD: Read Operation) ---
-// WEB SCIENCE: REST API & HTTP
-//   Supabase exposes a RESTful API. This query translates to:
-//   GET /rest/v1/houses?select=id,name,...&order=created_at.desc
-//   The response is JSON (JavaScript Object Notation), which is
-//   natively parsed into JavaScript objects.
-//
-// FUNCTIONAL PROGRAMMING: Destructuring Assignment
-//   const { data, error } = await ... extracts specific properties
-//   from the response object into separate variables.
-//
-// FUNCTIONAL PROGRAMMING: Array.map() with Spread Operator
-//   state.houses = data.map(h => ({ ...h, status: normalize(h.status) }))
-//   - Array.map() is a HIGHER-ORDER FUNCTION that transforms each element
-//   - The SPREAD OPERATOR (...h) creates a SHALLOW COPY of each object
-//   - Overwritten properties (status, priority) are normalized in-place
+/**
+ * Fetch all houses from Supabase, normalise status/priority fields,
+ * then re-render markers and profile cards.
+ * @side-effect Mutates state.houses; calls renderMarkers + renderCards.
+ */
 async function refreshHouses() {
   if (!supabaseClient) return;
 

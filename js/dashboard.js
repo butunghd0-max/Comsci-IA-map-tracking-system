@@ -1,32 +1,15 @@
 // ============================================
-// dashboard.js - Main Dashboard Controller
+// dashboard.js — Main Dashboard Controller
 // ============================================
-// PURPOSE: Manages the main dashboard page after login.
-//   Displays the logged-in user's name and provides navigation.
+// Shows the logged-in volunteer's name and provides navigation
+// to Public Activities (dashboard2.html) and Logout.
 //
-// OOP CONCEPT: Separation of Concerns
-//   Each page has its own controller script (app.js for login,
-//   dashboard.js for this page). This separates page-specific logic
-//   into independent modules, following the MODULAR DESIGN principle.
-//
-// OOP CONCEPT: Event-Driven Programming
-//   Navigation links use click event listeners rather than <a href>.
-//   This gives JavaScript full control over the navigation flow,
-//   allowing for delayed transitions and session cleanup.
-//
-// WEB SCIENCE: Responsive Design (Algorithmic Scaling)
-//   positionDashboardOverlay() implements a SCALING ALGORITHM that
-//   maps pixel coordinates from the source image to the rendered size.
-//   This is a form of COORDINATE TRANSFORMATION using ratio-based math.
-//
-// WEB SCIENCE: Session Verification
-//   Checks localStorage for session tokens before allowing access.
-//   This is a CLIENT-SIDE AUTHORIZATION GUARD - it prevents unauthorized
-//   UI access but is NOT a security boundary (server-side RLS provides that).
+// Depends on: config.js (LOGIN_PAGE, DASHBOARD2_PAGE, delayedNavigate).
+// Uses the same "smoke and mirrors" overlay pattern as app.js.
+// Redirects to login if no session found in localStorage.
 // ============================================
 
-// Dependencies: config.js provides LOGIN_PAGE, DASHBOARD2_PAGE,
-// NAV_DELAY_MS, and delayedNavigate().
+// Pixel positions relative to bg-dashboard.png (1885×911).
 const DASHBOARD_OVERLAY = {
   userIdX: 473,
   userIdY: 148,
@@ -46,18 +29,20 @@ const loggedInUserId = document.getElementById("loggedInUserId");
 const publicActivityLink = document.getElementById("publicActivityLink");
 const logoutLink = document.getElementById("logoutLink");
 
+// Redirect to login if no session exists (client-side guard).
 const activeUserId = window.localStorage.getItem("loggedInUserId");
 const activeUserName = window.localStorage.getItem("loggedInUserName");
 if (!activeUserId) {
   window.location.href = LOGIN_PAGE;
 }
 
-// The background image contains the text "You are logged in as".
-// We display the volunteer's name beside it.
+// The background image already shows "You are logged in as".
 loggedInUserId.textContent = (activeUserName || "").trim() || activeUserId || "";
 
-
-
+/**
+ * Scale overlay elements to match the rendered background image.
+ * Same aspect-ratio-aware algorithm as positionOverlay() in app.js.
+ */
 function positionDashboardOverlay() {
   if (!dashboardImage || !dashboardOverlay || !loggedInUserId || !logoutLink || !publicActivityLink) return;
   const rect = dashboardImage.getBoundingClientRect();

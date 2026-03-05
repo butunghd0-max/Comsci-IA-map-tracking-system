@@ -1,46 +1,23 @@
 // ============================================
-// app.js - Login Page Controller
+// app.js — Login Page Controller
 // ============================================
-// PURPOSE: Authenticates volunteers against the Supabase "volunteers"
-//          table and redirects to the Dashboard on success.
+// Authenticates volunteers against the Supabase "volunteers" table
+// and redirects to the Dashboard on success.
 //
-// OOP CONCEPT: MVC Architecture
-//   - MODEL: Supabase "volunteers" table (data layer)
-//   - VIEW: HTML form elements positioned over the background image
-//   - CONTROLLER: This script - mediates between user input and data
+// Depends on: config.js (supabaseClient, DASHBOARD_PAGE, NAV_DELAY_MS).
 //
-// OOP CONCEPT: Event-Driven Programming
-//   The entire login flow is driven by DOM events:
-//   - "submit" event triggers credential verification
-//   - "pointerdown"/"pointerup" events toggle password visibility
-//   - "resize" event repositions the overlay
-//   This follows the OBSERVER PATTERN where the browser emits events
-//   and registered handlers (callbacks) respond to them.
+// Architecture: "Smoke and Mirrors" overlay — transparent <input>
+// elements are positioned over a background image of the legacy
+// system, scaled proportionally to the rendered image size.
 //
-// WEB SCIENCE: Form Submission & HTTP
-//   HTML forms traditionally send data via HTTP POST. This app uses
-//   event.preventDefault() to INTERCEPT the form submission and handle
-//   authentication via JavaScript (Supabase REST API) instead.
-//   This is the foundation of modern AJAX-based web applications.
-//
-// WEB SCIENCE: Browser Object Model (BOM)
-//   window.setTimeout, window.localStorage, window.location are all
-//   BOM APIs. The BOM provides JavaScript access to browser features
-//   beyond the DOM (timers, storage, navigation, screen info).
-//
-// SECURITY NOTE: Passwords are compared in plaintext via Supabase query.
-//   In a production system, passwords should be hashed server-side.
+// SECURITY: Passwords are compared in plaintext via Supabase query.
+//   In a production system they should be hashed server-side.
 // ============================================
 
-// Dependencies: config.js provides SUPABASE_URL, SUPABASE_ANON_KEY,
-// supabaseClient, DASHBOARD_PAGE, and NAV_DELAY_MS.
 const REDIRECT_DELAY_MS = NAV_DELAY_MS;
 
-// --- Overlay Coordinate Map (Data Structure: Object Literal) ---
-// Pixel positions of each UI element relative to the source image
-// (1885x912 pixels). These are scaled proportionally at runtime by
-// positionOverlay() to maintain alignment at any viewport size.
-// This approach decouples layout data from rendering logic.
+// Pixel positions relative to bg-login.png (1885×912).
+// positionOverlay() scales these to the rendered image size.
 const OVERLAY = {
   inputX: 1361,
   userY: 183,
@@ -60,9 +37,7 @@ const OVERLAY = {
   statusY: 250,
 };
 
-// --- DOM Element References (cached for performance) ---
-// Querying the DOM once and caching references avoids repeated
-// getElementById calls, following the principle of memoization.
+// Cache DOM references once to avoid repeated lookups.
 const bgImage = document.getElementById("bgLogin");
 const form = document.getElementById("loginForm");
 const userIdInput = document.getElementById("userId");
@@ -70,20 +45,17 @@ const passwordInput = document.getElementById("password");
 const showPasswordButton = document.getElementById("showPasswordButton");
 const loginButton = document.getElementById("loginButton");
 const loginStatus = document.getElementById("loginStatus");
-let redirectTimerId = null; // Tracks pending redirect (for cancellation on failure)
+let redirectTimerId = null;
 
-// --- Responsive Overlay Positioning Algorithm ---
-// ALGORITHM: Computes the scale factor between the natural image
-//   dimensions and the rendered size on screen. All overlay coordinates
-//   are then multiplied by this factor to maintain pixel-perfect
-//   alignment at any viewport size.
-//
-// TECHNIQUE: Aspect-ratio-aware scaling
-//   Uses Math.min(scaleX, scaleY) to determine how the browser
-//   letterboxes or pillarboxes the image (object-fit: contain behavior),
-//   then calculates the actual rendered offset for accurate positioning.
+/**
+ * Scale and position every overlay element so it aligns with the
+ * background image at any viewport size.
+ *
+ * Uses Math.min(scaleX, scaleY) to match `object-fit: contain`
+ * behavior, then offsets for any letterboxing/pillarboxing.
+ */
 function positionOverlay() {
-  if (!bgImage || !form || !showPasswordButton) return; // Guard clause
+  if (!bgImage || !form || !showPasswordButton) return;
   const rect = bgImage.getBoundingClientRect();
   const naturalWidth = bgImage.naturalWidth;
   const naturalHeight = bgImage.naturalHeight;
@@ -135,21 +107,22 @@ function positionOverlay() {
   loginStatus.style.fontSize = `${Math.max(10, 12 * scaleY)}px`;
 }
 
-// --- Status Message Display ---
-// Single Responsibility: handles both message text and CSS class toggling.
-// Type parameter controls visual styling ("error" = red, "success" = green).
+/**
+ * Display a status message below the login form.
+ * @param {string} message - Text to show.
+ * @param {string} type    - CSS class to apply ("error" | "success" | "").
+ */
 function showStatus(message, type) {
   loginStatus.textContent = message;
   loginStatus.classList.remove("error", "success");
   if (type) loginStatus.classList.add(type);
 }
 
-// --- Password Visibility Toggle ---
-// ACCESSIBILITY: Uses press-and-hold pattern — password is visible only
-// while the button is actively pressed, then automatically hidden on
-// release. This prevents shoulder-surfing in shared environments.
-// Events covered: pointerdown/up, keyboard space/enter, blur, and
-// pointer capture loss — ensuring no edge case leaves the password exposed.
+// --- Password visibility (press-and-hold) ---
+// Uses pointer events for mouse/touch/stylus compatibility.
+// setPointerCapture ensures "pointerup" fires on this button even
+// if the cursor drifts outside it during the press.
+
 function revealPassword() {
   passwordInput.type = "text";
 }
@@ -158,10 +131,6 @@ function maskPassword() {
   passwordInput.type = "password";
 }
 
-// --- Pointer Event Listeners (Observer Pattern) ---
-// Uses pointer events (not mouse events) for cross-device compatibility
-// (mouse, touch, stylus). setPointerCapture ensures the "pointerup" fires
-// on the original button even if the cursor leaves the element.
 showPasswordButton.addEventListener("pointerdown", (event) => {
   event.preventDefault();
   revealPassword();
@@ -170,14 +139,11 @@ showPasswordButton.addEventListener("pointerdown", (event) => {
   }
 });
 
-// Batch-attach the same handler to multiple events (DRY principle).
-// Array.forEach replaces four separate addEventListener calls.
 ["pointerup", "pointercancel", "lostpointercapture", "blur"].forEach((eventName) => {
   showPasswordButton.addEventListener(eventName, maskPassword);
 });
 
-// Keyboard accessibility (WCAG compliance) — Space and Enter keys
-// trigger the same behavior as pointer press/release.
+// Keyboard support (Space / Enter) for accessibility.
 showPasswordButton.addEventListener("keydown", (event) => {
   if (event.key === " " || event.key === "Enter") {
     event.preventDefault();
@@ -194,15 +160,10 @@ showPasswordButton.addEventListener("keyup", (event) => {
 
 window.addEventListener("blur", maskPassword);
 
-// --- Login Form Submission Handler ---
-// ASYNC/AWAIT: The handler is declared async to use await for the
-// Supabase network request, simplifying promise-based control flow.
-//
-// FLOW: Validate inputs → Query database → Handle success/failure
-//   Success: Store session in localStorage, disable form, redirect.
-//   Failure: Show error, re-enable form, clear any pending redirect.
+// --- Login handler ---
+// Flow: validate → query Supabase → store session → redirect or show error.
 form.addEventListener("submit", async (event) => {
-  event.preventDefault(); // Prevent default HTML form submission (page reload)
+  event.preventDefault();
 
   const userId = userIdInput.value.trim();
   const password = passwordInput.value;
@@ -220,17 +181,7 @@ form.addEventListener("submit", async (event) => {
   showStatus("Checking credentials...", "");
   loginButton.disabled = true;
 
-  // --- Supabase Query (CRUD: Read Operation) ---
-  // WEB SCIENCE: REST API Request
-  //   This translates to: GET /rest/v1/volunteers?user_id=eq.X&password=eq.Y
-  //   The Supabase client ABSTRACTS this HTTP request behind a
-  //   fluent (chainable) API - each method returns `this` for chaining.
-  //
-  // FUNCTIONAL PROGRAMMING: Destructuring Assignment
-  //   { data, error } extracts two properties from the response object.
-  //
-  // .maybeSingle() returns null (not an error) if no row matches,
-  //   which is safer than .single() which would throw on zero results.
+  // .maybeSingle() returns null (not an error) when no row matches.
   const { data, error } = await supabaseClient
     .from("volunteers")
     .select("user_id,name")
@@ -239,18 +190,16 @@ form.addEventListener("submit", async (event) => {
     .maybeSingle();
 
   if (!error && data?.user_id) {
-    // Nullish coalescing + trim: safely handle missing name field.
     const displayName = (data.name || "").trim() || data.user_id;
 
     showStatus("Login successful. Redirecting...", "success");
     maskPassword();
 
-    // Persist session to localStorage (client-side session management).
-    // This survives page reloads and allows other pages to verify login.
+    // Persist session so other pages can verify login.
     window.localStorage.setItem("loggedInUserId", data.user_id);
     window.localStorage.setItem("loggedInUserName", displayName);
 
-    // Disable all inputs to prevent double-submission during redirect.
+    // Disable form to prevent double-submission during redirect.
     userIdInput.disabled = true;
     passwordInput.disabled = true;
     showPasswordButton.disabled = true;
@@ -275,9 +224,7 @@ form.addEventListener("submit", async (event) => {
   loginButton.disabled = false;
 });
 
-// --- Responsive Event Binding ---
-// Reposition overlay when image loads and on window resize,
-// ensuring the login form stays aligned at all viewport sizes.
+// Re-position on image load and window resize.
 bgImage.addEventListener("load", positionOverlay);
 window.addEventListener("resize", positionOverlay);
-positionOverlay(); // Initial positioning on script load
+positionOverlay();

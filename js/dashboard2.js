@@ -1,37 +1,15 @@
 // ============================================
-// dashboard2.js - Public Activities Dashboard Controller
+// dashboard2.js — Public Activities Dashboard Controller
 // ============================================
-// PURPOSE: Manages the "Public Activities" dashboard page.
-//   Provides navigation to the Map Tracking System and logout.
+// Navigation hub for the Map Tracking System page. Also provides
+// a "Close" (back to dashboard) button and Logout.
 //
-// OOP CONCEPT: Code Reuse (DRY)
-//   This controller follows the SAME PATTERN as dashboard.js:
-//   overlay coordinates + scaling function + event listeners.
-//   The shared delayedNavigate() function from config.js avoids
-//   duplicating navigation logic (DRY principle).
-//
-// OOP CONCEPT: Modular Architecture
-//   The app is split into multiple HTML pages, each with its own
-//   controller script. This demonstrates MODULAR DECOMPOSITION -
-//   dividing a complex system into manageable, independent modules.
-//
-// WEB SCIENCE: Multi-Page Application (MPA) Architecture
-//   Unlike a SPA (Single-Page Application), this app uses separate
-//   HTML pages connected via URL navigation. Each page load is a
-//   full HTTP request-response cycle (GET /dashboard2.html).
-//   The tradeoff: simpler architecture but no client-side routing.
-//
-// WEB SCIENCE: Session Persistence Across Pages
-//   localStorage data persists across page navigations within the
-//   same ORIGIN (protocol + domain + port). This allows the user's
-//   login state to be shared between index.html, dashboard.html,
-//   dashboard2.html, and maptrackingsystem.html without cookies.
+// Depends on: config.js (LOGIN_PAGE, DASHBOARD_PAGE, MAP_TRACKING_PAGE,
+//             delayedNavigate).
+// Same overlay pattern and session guard as dashboard.js.
 // ============================================
 
-// Dependencies: config.js provides LOGIN_PAGE, DASHBOARD_PAGE,
-// MAP_TRACKING_PAGE, NAV_DELAY_MS, and delayedNavigate().
-
-// Overlay coordinates based on bg-dashboard2.png source size (1885x911).
+// Pixel positions relative to bg-dashboard2.png (1885×911).
 const DASHBOARD2_OVERLAY = {
   userIdX: 473,
   userIdY: 148,
@@ -66,6 +44,7 @@ const mapTrackingButton = document.getElementById("mapTrackingButton");
 const closeLink2 = document.getElementById("closeLink2");
 const logoutLink2 = document.getElementById("logoutLink2");
 
+// Redirect to login if no session exists.
 const activeUserId = window.localStorage.getItem("loggedInUserId");
 const activeUserName = window.localStorage.getItem("loggedInUserName");
 if (!activeUserId) {
@@ -73,9 +52,10 @@ if (!activeUserId) {
 }
 loggedInUserId2.textContent = (activeUserName || "").trim() || activeUserId || "";
 
-
-
-
+/**
+ * Scale overlay elements to match the rendered background image.
+ * Same algorithm as dashboard.js and app.js.
+ */
 function positionDashboard2Overlay() {
   if (
     !dashboard2Image ||
