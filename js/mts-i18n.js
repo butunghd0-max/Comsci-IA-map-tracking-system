@@ -107,6 +107,7 @@ const I18N = {
   location_failed:  { en: "Could not get your location", id: "Tidak dapat menentukan lokasi Anda", zh_cn: "无法获取您的位置", zh_tw: "無法獲取您的位置" },
   // Toasts & Confirms
   toast_name_req:   { en: "Name is required", id: "Nama wajib diisi", zh_cn: "名称为必填项", zh_tw: "名稱為必填項" },
+  toast_type_req:   { en: "Please select a type", id: "Silakan pilih tipe", zh_cn: "请选择类型", zh_tw: "請選擇類型" },
   toast_saved:      { en: "Saved", id: "Tersimpan", zh_cn: "已保存", zh_tw: "已儲存" },
   toast_deleted:    { en: "Deleted", id: "Terhapus", zh_cn: "已删除", zh_tw: "已刪除" },
   toast_no_url:     { en: "No URL to open", id: "Tidak ada URL", zh_cn: "没有可打开的 URL", zh_tw: "沒有可打開的 URL" },

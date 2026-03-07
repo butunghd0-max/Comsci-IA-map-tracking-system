@@ -30,8 +30,19 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 1. Clone the repo
 2. Open `index.html` in a browser (or serve via any static file server)
-3. Log in with a volunteer ID (see `db/supabase_setup.sql` for test credentials)
+3. Log in using the test credentials below
 4. Select **Jakarta** from the city dropdown
+
+## Test Credentials
+
+Use any of the following accounts to log in. All accounts have the same password.
+
+| Field        | Value            |
+| ------------ | ---------------- |
+| **User ID**  | `2016040195`     |
+| **Password** | `HQJakut1TzuChi` |
+
+> **Note:** There are 10 volunteer accounts (`2016040195` through `2016040204`), all sharing the same password. Any of them will work.
 
 ## File Structure
 

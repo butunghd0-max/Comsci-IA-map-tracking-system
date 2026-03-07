@@ -882,6 +882,11 @@ async function createHouse({ lat, lng }) {
     return;
   }
 
+  if (!type) {
+    showToast(t("toast_type_req"));
+    return;
+  }
+
   // Duplicate name check
   const dupName = state.houses.find((h) => (h.name || "").toLowerCase() === name.toLowerCase());
   if (dupName) {
