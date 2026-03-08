@@ -36,7 +36,7 @@ INSERT INTO volunteers (user_id, password, name) VALUES
 CREATE TABLE houses (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
-  type TEXT CHECK (type IN ('Orphanage', 'Nursing Home', 'Rest House')),
+  type TEXT NOT NULL CHECK (type IN ('Orphanage', 'Nursing Home', 'Rest House')),
   status TEXT CHECK (status IN ('new case', 'active care', 'follow-up', 'closed')) DEFAULT 'new case',
   priority TEXT CHECK (priority IN ('urgent', 'normal', 'stable')) DEFAULT 'normal',
   last_visit_date DATE,
@@ -199,8 +199,8 @@ INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, phot
    '[{"url":"https://placehold.co/400x300/e74c3c/fff?text=Photo+1","path":"test/1.jpg","name":"Front entrance","caption":"Main gate view"},{"url":"https://placehold.co/400x300/3498db/fff?text=Photo+2","path":"test/2.jpg","name":"Dining hall","caption":"Lunch time"},{"url":"https://placehold.co/400x300/2ecc71/fff?text=Photo+3","path":"test/3.jpg","name":"Bedroom A","caption":"Renovated"},{"url":"https://placehold.co/400x300/9b59b6/fff?text=Photo+4","path":"test/4.jpg","name":"Playground","caption":"New swings"},{"url":"https://placehold.co/400x300/f39c12/fff?text=Photo+5","path":"test/5.jpg","name":"Kitchen","caption":"Clean and tidy"},{"url":"https://placehold.co/400x300/1abc9c/fff?text=Photo+6","path":"test/6.jpg","name":"Library","caption":"200 books"},{"url":"https://placehold.co/400x300/e67e22/fff?text=Photo+7","path":"test/7.jpg","name":"Bathroom","caption":"Recently tiled"},{"url":"https://placehold.co/400x300/34495e/fff?text=Photo+8","path":"test/8.jpg","name":"Garden","caption":"Herb garden"},{"url":"https://placehold.co/400x300/c0392b/fff?text=Photo+9","path":"test/9.jpg","name":"Storage room","caption":"Well organized"},{"url":"https://placehold.co/400x300/16a085/fff?text=Photo+10","path":"test/10.jpg","name":"Roof repair","caption":"Work in progress"}]');
 
 -- Bare minimum house (only required fields)
-INSERT INTO houses (name, lat, lng) VALUES
-  ('Minimal House', -6.155, 106.870);
+INSERT INTO houses (name, type, lat, lng) VALUES
+  ('Minimal House', 'Rest House', -6.155, 106.870);
 
 -- Populate last_visit_date for houses with active care status (random dates within last 90 days)
 UPDATE houses SET last_visit_date = CURRENT_DATE - (floor(random() * 30))::int
