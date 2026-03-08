@@ -488,13 +488,15 @@ UPDATE houses SET last_visit_date = CURRENT_DATE - (floor(random() * 60 + 30))::
 -- ============================================
 -- Row Level Security (RLS)
 -- ============================================
--- RLS is enabled so the anon key can only do what policies allow.
--- Currently all operations are public (demo).  For production,
--- restrict writes to authenticated users only.
+-- Enabled on both tables so the anon key respects policy rules.
+-- Demo: all public. Production: swap USING (true) → USING (auth.role() = 'authenticated').
 ALTER TABLE volunteers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE houses ENABLE ROW LEVEL SECURITY;
 
+-- volunteers: read-only — app checks credentials but never creates/edits users.
 CREATE POLICY "Allow public read access on volunteers" ON volunteers FOR SELECT USING (true);
+
+-- houses: full CRUD — any volunteer can add, view, edit, delete records.
 CREATE POLICY "Allow public read access on houses" ON houses FOR SELECT USING (true);
 CREATE POLICY "Allow public insert on houses" ON houses FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public update on houses" ON houses FOR UPDATE USING (true);
@@ -503,10 +505,11 @@ CREATE POLICY "Allow public delete on houses" ON houses FOR DELETE USING (true);
 -- ============================================
 -- Storage bucket for house photos
 -- ============================================
--- Public bucket — photos are accessible without auth tokens.
--- The JS client compresses images before upload (see resizeImage in mts-utils.js).
+-- Public bucket — no auth needed to view/upload.
+-- JS compresses images before upload (see resizeImage in mts-utils.js).
 INSERT INTO storage.buckets (id, name, public) VALUES ('house-photos', 'house-photos', true);
 
+-- Scoped to house-photos bucket only.
 CREATE POLICY "Allow public upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'house-photos');
 CREATE POLICY "Allow public read" ON storage.objects FOR SELECT USING (bucket_id = 'house-photos');
 CREATE POLICY "Allow public update" ON storage.objects FOR UPDATE USING (bucket_id = 'house-photos');
