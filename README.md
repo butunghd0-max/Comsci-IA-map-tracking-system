@@ -278,11 +278,21 @@ All source files include developer-focused comments (file headers, JSDoc, and in
 The original system this project is based on can be viewed at [https://www.tzuchi.or.id/](https://www.tzuchi.or.id/) (click VIS for the original website).
 
 - Agafonkin, Vladimir. _Leaflet_. Version 1.9.4, 2023, [leafletjs.com](https://leafletjs.com). Accessed 16 June 2025.
+- Agafonkin, Vladimir. "Leaflet API Reference." _Leaflet Documentation_, [leafletjs.com/reference](https://leafletjs.com/reference.html). Accessed 16 June 2025.
 - Leaflet Contributors. _Leaflet.markercluster_. Version 1.5.3, GitHub, [github.com/Leaflet/Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster). Accessed 16 June 2025.
 - Mozilla Contributors. "HTMLCanvasElement: toBlob() Method." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob). Accessed 16 June 2025.
+- Mozilla Contributors. "Window: localStorage Property." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage). Accessed 16 June 2025.
+- Mozilla Contributors. "FileReader API." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/FileReader). Accessed 16 June 2025.
+- Mozilla Contributors. "Navigator: onLine Property." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine). Accessed 16 June 2025.
+- Mozilla Contributors. "Crypto: randomUUID() Method." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID). Accessed 16 June 2025.
+- Mozilla Contributors. "ResizeObserver API." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver). Accessed 16 June 2025.
+- Mozilla Contributors. "object-fit." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit). Accessed 16 June 2025.
 - OpenStreetMap Contributors. _OpenStreetMap_. OpenStreetMap Foundation, [openstreetmap.org](https://openstreetmap.org). Accessed 16 June 2025.
 - SheetJS LLC. _SheetJS Community Edition_. SheetJS LLC, [sheetjs.com](https://sheetjs.com). Accessed 16 June 2025.
 - Supabase Inc. _Supabase_. Supabase Inc., [supabase.com](https://supabase.com). Accessed 16 June 2025.
+- Supabase Inc. "JavaScript Client Library." _Supabase Docs_, [supabase.com/docs/reference/javascript](https://supabase.com/docs/reference/javascript). Accessed 16 June 2025.
+- Supabase Inc. "Storage." _Supabase Docs_, [supabase.com/docs/guides/storage](https://supabase.com/docs/guides/storage). Accessed 16 June 2025.
+- Supabase Inc. "Row Level Security." _Supabase Docs_, [supabase.com/docs/guides/auth/row-level-security](https://supabase.com/docs/guides/auth/row-level-security). Accessed 16 June 2025.
 - Tzu Chi Indonesia. _Volunteer Information System (VIS)_. Internal system interface screenshots provided by client, 18 Apr. 2025.
 
 ---
