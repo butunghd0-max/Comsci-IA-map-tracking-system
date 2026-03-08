@@ -115,6 +115,8 @@ Supabase
 
 All 10 accounts share the same password: `HQJakut1TzuChi`
 
+Log in with different accounts to test the "last modified by" audit trail. There is no self-registration - accounts are issued by the organization (Yayasan) only.
+
 | User ID      | Name               | Password         |
 | :----------- | :----------------- | :--------------- |
 | `2016040195` | Admin Volunteer 1  | `HQJakut1TzuChi` |
