@@ -389,6 +389,30 @@ INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, phot
    '[{"url":"https://placehold.co/400x300/e74c3c/fff?text=P1","path":"test/p1.jpg","name":"P1","caption":"1"},{"url":"https://placehold.co/400x300/3498db/fff?text=P2","path":"test/p2.jpg","name":"P2","caption":"2"},{"url":"https://placehold.co/400x300/2ecc71/fff?text=P3","path":"test/p3.jpg","name":"P3","caption":"3"},{"url":"https://placehold.co/400x300/9b59b6/fff?text=P4","path":"test/p4.jpg","name":"P4","caption":"4"},{"url":"https://placehold.co/400x300/f39c12/fff?text=P5","path":"test/p5.jpg","name":"P5","caption":"5"},{"url":"https://placehold.co/400x300/1abc9c/fff?text=P6","path":"test/p6.jpg","name":"P6","caption":"6"},{"url":"https://placehold.co/400x300/e67e22/fff?text=P7","path":"test/p7.jpg","name":"P7","caption":"7"},{"url":"https://placehold.co/400x300/34495e/fff?text=P8","path":"test/p8.jpg","name":"P8","caption":"8"},{"url":"https://placehold.co/400x300/c0392b/fff?text=P9","path":"test/p9.jpg","name":"P9","caption":"9"}]'),
   ('Panti Foto Kosong Array', 'Rest House', 'new case', 'normal', -6.138, 106.838, '081100070003', 'Photos field is empty array.', '[]');
 
+-- Names that match UI button labels (tests search/filter confusion with UI text)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Save', 'Orphanage', 'active care', 'stable', -6.119, 106.819, '081100080001', 'Name is same as Save button.'),
+  ('Delete', 'Nursing Home', 'active care', 'urgent', -6.129, 106.829, '081100080002', 'Name is same as Delete button.'),
+  ('Cancel', 'Rest House', 'new case', 'normal', -6.139, 106.839, '081100080003', 'Name is same as Cancel action.'),
+  ('Close', 'Orphanage', 'active care', 'stable', -6.149, 106.849, '081100080004', 'Name is same as Close action.'),
+  ('Add pin', 'Nursing Home', 'new case', 'normal', -6.159, 106.859, '081100080005', 'Name is same as Add Pin button.');
+
+-- Hyper-precise coordinates (tests rounding / display formatting)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Precision House 1', 'Orphanage', 'active care', 'stable', -6.123456789012345, 106.789012345678901, '081100090001', 'Lat/lng with 15 decimal places.'),
+  ('Precision House 2', 'Nursing Home', 'new case', 'normal', -6.100000000000001, 106.700000000000001, '081100090002', 'Coords with trailing near-zero digits.'),
+  ('Precision House 3', 'Rest House', 'active care', 'urgent', -6.999999999999999, 106.999999999999999, '081100090003', 'Near-integer coords.'),
+  ('Precision House 4', 'Orphanage', 'active care', 'stable', -6.150000000000000, 106.850000000000000, '081100090004', 'Exact coords padded with zeros.');
+
+-- Every field maxed out (name, type, status, priority, date, coords, contact, notes, links, photos)
+INSERT INTO houses (name, type, status, priority, last_visit_date, lat, lng, contact, notes, links, photos, last_modified_by, last_modified_at) VALUES
+  ('Panti Asuhan Yayasan Kelengkapan Maksimal Seluruh Data Terisi Penuh Cabang Jakarta Pusat Divisi Pelayanan Sosial',
+   'Orphanage', 'active care', 'urgent', '2026-03-08',
+   -6.175000, 106.845000, '081299887766',
+   'FULL HOUSE: Every single field is populated. This is the stress test for maximum data load. Visit notes from 2026-03-08: Arrived at 08:30. Met with director. Checked all rooms. Kitchen needs supplies. Playground equipment rusty. Roof leaks in building C. Donated 30 blankets. Scheduled next visit for March 15. Volunteer team: 6 people attended. Budget request: Rp 25 million for renovation. Priority items: (1) Fix roof immediately (2) Replace stove (3) Paint exterior walls. Follow-up items: Contact contractor for estimate, submit grant application, coordinate with local government office.',
+   '[{"name":"Visit Report March 2026","url":"https://docs.google.com/doc/visit-mar26"},{"name":"Budget Request Q1","url":"https://docs.google.com/sheet/budget-q1"},{"name":"Photo Album March","url":"https://drive.google.com/photos-mar"},{"name":"Contractor Quote","url":"https://docs.google.com/doc/contractor"},{"name":"Grant Application","url":"https://docs.google.com/doc/grant"},{"name":"Government Letter","url":"https://docs.google.com/doc/gov-letter"},{"name":"Donation Receipt #47","url":"https://docs.google.com/doc/receipt47"},{"name":"Volunteer Attendance","url":"https://docs.google.com/sheet/vol-attend"},{"name":"Floor Plan Annotated","url":"https://drive.google.com/floorplan"},{"name":"Insurance Certificate","url":"https://drive.google.com/insurance"}]',
+   '[{"url":"https://placehold.co/400x300/e74c3c/fff?text=Full+1","path":"full/1.jpg","name":"Front gate","caption":"Main entrance"},{"url":"https://placehold.co/400x300/3498db/fff?text=Full+2","path":"full/2.jpg","name":"Kitchen","caption":"Needs new stove"},{"url":"https://placehold.co/400x300/2ecc71/fff?text=Full+3","path":"full/3.jpg","name":"Roof damage","caption":"Building C leak"},{"url":"https://placehold.co/400x300/9b59b6/fff?text=Full+4","path":"full/4.jpg","name":"Playground","caption":"Rusty equipment"},{"url":"https://placehold.co/400x300/f39c12/fff?text=Full+5","path":"full/5.jpg","name":"Bedroom A","caption":"30 blankets donated"},{"url":"https://placehold.co/400x300/1abc9c/fff?text=Full+6","path":"full/6.jpg","name":"Bedroom B","caption":"Clean and tidy"},{"url":"https://placehold.co/400x300/e67e22/fff?text=Full+7","path":"full/7.jpg","name":"Library","caption":"New books"},{"url":"https://placehold.co/400x300/34495e/fff?text=Full+8","path":"full/8.jpg","name":"Bathroom","caption":"Working well"},{"url":"https://placehold.co/400x300/c0392b/fff?text=Full+9","path":"full/9.jpg","name":"Storage","caption":"Organized"},{"url":"https://placehold.co/400x300/16a085/fff?text=Full+10","path":"full/10.jpg","name":"Garden","caption":"Growing herbs"}]',
+   'Admin Volunteer 1', '2026-03-08T08:30:00Z');
 
 -- Additional houses to reach 156 total for stress testing
 INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
