@@ -12,8 +12,35 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 **Live:** [https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/](https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/)
 
+---
+
+## Screenshots
+
+### Login Page
+
+![Login page](images/screenshots/log%20in.png)
+
+### Map View with Marker Clusters
+
+![Map view](images/screenshots/map%20view%20tab.png)
+
+### Map with Sidebar Open
+
+![Map with sidebar](images/screenshots/map%20wih%20sidebar.png)
+
+### Profile Cards Tab
+
+![Profile cards](images/screenshots/card%20profile%20tab.png)
+
+### Excel Export (Simplified Chinese)
+
+![Spreadsheet export](images/screenshots/spreadsheet%20export%20in%20simplifed%20chinese.png)
+
+---
+
 ## Table of Contents
 
+- [Screenshots](#screenshots)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
