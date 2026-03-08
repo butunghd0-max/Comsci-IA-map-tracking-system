@@ -10,7 +10,7 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 **IB Computer Science IA — Criterion C Product**
 
----
+**Live:** [https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/](https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/)
 
 ## Table of Contents
 
