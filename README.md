@@ -267,6 +267,8 @@ Plagiarism or unauthorized reproduction of this project is not permitted under I
 
 The client's name has been withheld at their request. All volunteer names and credentials in the test data are fictional.
 
+All source files include developer-focused comments (file headers, JSDoc, and inline explanations) so that the client's IT team can understand, maintain, and extend the codebase if the system is accepted for production use.
+
 ---
 
 > _I hope dapet 34/34 anjay, izin_ 🙏
