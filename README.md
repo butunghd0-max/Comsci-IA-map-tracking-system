@@ -8,7 +8,7 @@
 
 A web-based map tracking application built for a volunteer humanitarian organization in Jakarta, Indonesia. Volunteers use this system to track visits to orphanages, nursing homes, and rest houses across the city.
 
-**IB Computer Science IA  -  Criterion C Product**
+**IB Computer Science IA - Criterion C Product**
 
 **Live:** [https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/](https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/)
 
@@ -28,19 +28,19 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 ## Features
 
-- **Interactive Map**  -  Leaflet.js with marker clustering and color-coded pins by priority level (green = stable, yellow = normal, red = urgent).
-- **House Profiles**  -  Full CRUD for tracking name, type, priority, case status, contact info, visit dates, and notes.
-- **Photo Management**  -  Upload up to 10 photos per house with client-side compression, naming, and captioning via Supabase Storage.
-- **Search and Filter**  -  Multi-criteria filtering by priority, status, type, name, and contact number with real-time map and card updates.
-- **Sorting**  -  Stable multi-key sorting by name, type, status, priority, or last visit date.
-- **4 Languages**  -  Real-time interface translation for English, Indonesian (Bahasa), Simplified Chinese, and Traditional Chinese, persisted in localStorage.
-- **Localized Excel Export**  -  One-click spreadsheet export via SheetJS. Column headers match the currently selected language.
-- **Document Links**  -  Attach Google Docs, Sheets, and custom URLs with labels to each house record, stored as structured JSON.
-- **Unsaved Changes Guard**  -  Warns before navigating away or closing the sidebar when edits have not been saved.
-- **Audit Trail**  -  Tracks `last_modified_by` and `last_modified_at` on every save using the logged-in volunteer identity.
-- **Offline Indicator**  -  Visual banner when internet connection drops.
-- **Loading Spinner**  -  Feedback overlay during data fetches.
-- **Input Validation**  -  Jakarta bounding-box check, proximity duplicate warning, phone number normalization, and XSS prevention via HTML entity encoding.
+- **Interactive Map** - Leaflet.js with marker clustering and color-coded pins by priority level (green = stable, yellow = normal, red = urgent).
+- **House Profiles** - Full CRUD for tracking name, type, priority, case status, contact info, visit dates, and notes.
+- **Photo Management** - Upload up to 10 photos per house with client-side compression, naming, and captioning via Supabase Storage.
+- **Search and Filter** - Multi-criteria filtering by priority, status, type, name, and contact number with real-time map and card updates.
+- **Sorting** - Stable multi-key sorting by name, type, status, priority, or last visit date.
+- **4 Languages** - Real-time interface translation for English, Indonesian (Bahasa), Simplified Chinese, and Traditional Chinese, persisted in localStorage.
+- **Localized Excel Export** - One-click spreadsheet export via SheetJS. Column headers match the currently selected language.
+- **Document Links** - Attach Google Docs, Sheets, and custom URLs with labels to each house record, stored as structured JSON.
+- **Unsaved Changes Guard** - Warns before navigating away or closing the sidebar when edits have not been saved.
+- **Audit Trail** - Tracks `last_modified_by` and `last_modified_at` on every save using the logged-in volunteer identity.
+- **Offline Indicator** - Visual banner when internet connection drops.
+- **Loading Spinner** - Feedback overlay during data fetches.
+- **Input Validation** - Jakarta bounding-box check, proximity duplicate warning, phone number normalization, and XSS prevention via HTML entity encoding.
 
 ---
 
@@ -58,7 +58,7 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 ## Architecture
 
-The application follows a modular client-side architecture. All logic runs in the browser  -  there is no custom server. Supabase provides the database (PostgreSQL), REST API, and file storage.
+The application follows a modular client-side architecture. All logic runs in the browser - there is no custom server. Supabase provides the database (PostgreSQL), REST API, and file storage.
 
 ```
 Browser
@@ -113,12 +113,20 @@ Supabase
 
 ## Test Credentials
 
-All 10 volunteer accounts (`2016040195` through `2016040204`) share the same password.
+All 10 accounts share the same password: `HQJakut1TzuChi`
 
-| Field        | Value            |
-| :----------- | :--------------- |
-| **User ID**  | `2016040195`     |
-| **Password** | `HQJakut1TzuChi` |
+| User ID      | Name               | Password         |
+| :----------- | :----------------- | :--------------- |
+| `2016040195` | Admin Volunteer 1  | `HQJakut1TzuChi` |
+| `2016040196` | Admin Volunteer 2  | `HQJakut1TzuChi` |
+| `2016040197` | Admin Volunteer 3  | `HQJakut1TzuChi` |
+| `2016040198` | Admin Volunteer 4  | `HQJakut1TzuChi` |
+| `2016040199` | Admin Volunteer 5  | `HQJakut1TzuChi` |
+| `2016040200` | Admin Volunteer 6  | `HQJakut1TzuChi` |
+| `2016040201` | Admin Volunteer 7  | `HQJakut1TzuChi` |
+| `2016040202` | Admin Volunteer 8  | `HQJakut1TzuChi` |
+| `2016040203` | Admin Volunteer 9  | `HQJakut1TzuChi` |
+| `2016040204` | Admin Volunteer 10 | `HQJakut1TzuChi` |
 
 ---
 
