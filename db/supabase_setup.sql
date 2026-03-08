@@ -289,8 +289,8 @@ INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALU
    'Line 1\nLine 2\nLine 3\n\n---\n\n**Bold?** *Italic?* `Code?`\n\n<h1>HTML heading?</h1>\n\nTabs:\there\tand\there\n\nURL: https://example.com/test?foo=bar&baz=qux#anchor');
 
 -- House with all optional fields null/empty
-INSERT INTO houses (name, lat, lng) VALUES
-  ('Absolutely Minimal', -6.200, 106.800);
+INSERT INTO houses (name, type, lat, lng) VALUES
+  ('Absolutely Minimal', 'Rest House', -6.200, 106.800);
 
 -- Houses with notes containing only numbers (×4)
 INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
@@ -319,10 +319,10 @@ INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, link
    '[{"name":"","url":"https://example.com/no-name"},{"name":"No URL Doc","url":""},{"name":"","url":""},{"name":"Normal Link","url":"https://example.com"}]');
 
 -- More houses with all optional fields null/empty (×4)
-INSERT INTO houses (name, lat, lng) VALUES
-  ('Absolutely Minimal 2', -6.210, 106.810),
-  ('Absolutely Minimal 3', -6.220, 106.820),
-  ('Absolutely Minimal 4', -6.230, 106.830);
+INSERT INTO houses (name, type, lat, lng) VALUES
+  ('Absolutely Minimal 2', 'Rest House', -6.210, 106.810),
+  ('Absolutely Minimal 3', 'Orphanage', -6.220, 106.820),
+  ('Absolutely Minimal 4', 'Nursing Home', -6.230, 106.830);
 INSERT INTO houses (name, type, lat, lng) VALUES
   ('Type Only No Status', 'Orphanage', -6.240, 106.840);
 
