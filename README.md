@@ -14,6 +14,23 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 ---
 
+## Table of Contents
+
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Test Credentials](#test-credentials)
+- [File Structure](#file-structure)
+- [Database Schema](#database-schema)
+- [Security Notes](#security-notes)
+- [Known Limitations](#known-limitations)
+- [Future Improvements](#future-improvements)
+- [License](#license)
+
+---
+
 ## Screenshots
 
 ### Login Page
@@ -35,21 +52,6 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 ### Excel Export (Simplified Chinese)
 
 ![Spreadsheet export](images/screenshots/spreadsheet%20export%20in%20simplifed%20chinese.png)
-
----
-
-## Table of Contents
-
-- [Screenshots](#screenshots)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [Test Credentials](#test-credentials)
-- [File Structure](#file-structure)
-- [Database Schema](#database-schema)
-- [Security Notes](#security-notes)
-- [License](#license)
 
 ---
 
