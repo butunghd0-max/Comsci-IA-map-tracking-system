@@ -141,6 +141,11 @@ const I18N = {
   try_reset:        { en: "Try resetting your filters", id: "Coba reset filter Anda", zh_cn: "尝试重置筛选条件", zh_tw: "嘗試重置篩選條件" },
   reset:            { en: "Reset", id: "Reset", zh_cn: "重置", zh_tw: "重置" },
   refresh_houses:   { en: "Refresh houses", id: "Segarkan rumah", zh_cn: "刷新房屋", zh_tw: "重新整理房屋" },
+  // Export headers
+  last_visit_date:  { en: "Last Visit Date", id: "Tanggal Kunjungan Terakhir", zh_cn: "最后访问日期", zh_tw: "最後訪問日期" },
+  documents:        { en: "Documents", id: "Dokumen", zh_cn: "文档", zh_tw: "文件" },
+  last_modified_at: { en: "Last Modified At", id: "Terakhir Diubah Pada", zh_cn: "最后修改时间", zh_tw: "最後修改時間" },
+  created_at:       { en: "Created At", id: "Dibuat Pada", zh_cn: "创建时间", zh_tw: "建立時間" },
 };
 
 /**

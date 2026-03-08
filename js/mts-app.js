@@ -788,7 +788,7 @@ function exportToCSV() {
     return;
   }
 
-  const headers = ["Name", "Type", "Case Status", "Priority", "Last Visit Date", "Latitude", "Longitude", "Contact", "Notes", "Documents", "Last Modified By", "Last Modified At", "Created At"];
+  const headers = [t("name"), t("type"), t("case_status"), t("priority"), t("last_visit_date"), t("latitude"), t("longitude"), t("contact"), t("notes"), t("documents"), t("last_modified_by"), t("last_modified_at"), t("created_at")];
   const rows = state.houses.map((h) => {
     // Merge legacy doc/sheet into links for export
     const allDocs = [];
