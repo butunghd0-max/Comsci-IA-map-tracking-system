@@ -202,6 +202,105 @@ INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, phot
 INSERT INTO houses (name, type, lat, lng) VALUES
   ('Minimal House', 'Rest House', -6.155, 106.870);
 
+-- ============================================
+-- EXTREME EDGE CASES (harder stress tests)
+-- ============================================
+
+-- XSS injection attempts (should be escaped by escapeHtml/escapeAttr)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('<script>alert("XSS")</script>', 'Orphanage', 'active care', 'urgent', -6.140, 106.820, '081100001111', '<img onerror=alert(1) src=x> Testing XSS in notes field.'),
+  ('Panti <b>Bold</b> & <i>Italic</i>', 'Nursing Home', 'new case', 'normal', -6.180, 106.860, '081100002222', 'Name contains HTML tags — should render as plain text.'),
+  ('onclick="hack()" Panti', 'Rest House', 'active care', 'stable', -6.160, 106.840, '081100003333', 'Name contains JS event attribute.');
+
+-- Unicode and emoji names (tests encoding + rendering)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('パンティ・アスハン 🏠', 'Orphanage', 'active care', 'stable', -6.150, 106.830, '081100004444', 'Japanese + emoji in name.'),
+  ('Панти Асухан Москва 🇷🇺', 'Nursing Home', 'new case', 'normal', -6.190, 106.870, '081100005555', 'Cyrillic + flag emoji.'),
+  ('بانتي أسوهان 🕌', 'Rest House', 'active care', 'urgent', -6.170, 106.850, '081100006666', 'Arabic RTL text + emoji.'),
+  ('🏥🏠🏡🏘️ Emoji-Only Name 🔴🟡🟢', 'Orphanage', 'active care', 'stable', -6.135, 106.815, '081100007777', 'Name is mostly emojis — tests text overflow.'),
+  ('Pañtí Àsühán Çédíllé Ñoño', 'Nursing Home', 'active care', 'normal', -6.195, 106.895, '081100008888', 'Accented Latin characters.');
+
+-- SQL injection attempts (should be harmless since we use parameterized queries)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Robert''); DROP TABLE houses;--', 'Orphanage', 'new case', 'normal', -6.145, 106.825, '081100009999', 'Classic Bobby Tables test.'),
+  ('1'' OR ''1''=''1', 'Rest House', 'active care', 'stable', -6.185, 106.865, '081100010000', 'SQL injection in name field.');
+
+-- Absurdly long notes (tests text overflow + scrolling)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Panti Uji Catatan Mega', 'Orphanage', 'active care', 'urgent', -6.155, 106.835,  '081100011111',
+   'MEGA NOTE TEST: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. REPEAT: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. AGAIN: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. END OF MEGA NOTE.');
+
+-- Extremely long name (200+ characters)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Panti Asuhan Yayasan Kasih Sayang Anak-Anak Indonesia Timur Cabang Jakarta Utara Kelurahan Tanjung Priok Kecamatan Koja Divisi Pelayanan Sosial Anak Unit Pendidikan Dan Pelatihan Keterampilan Program Khusus', 'Orphanage', 'active care', 'stable', -6.115, 106.855, '081100012222', 'Absurdly long name — 200+ chars. Tests card layout, tooltip, sidebar title.');
+
+-- Name with only whitespace (edge case for .trim())
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('   ', 'Rest House', 'new case', 'normal', -6.175, 106.845, 'Name is just spaces — should display as (Unnamed) or empty.');
+
+-- Name with single character
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('X', 'Orphanage', 'active care', 'urgent', -6.165, 106.855, 'Single character name.');
+
+-- Contact with edge formats
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Panti Kontak Aneh 1', 'Nursing Home', 'active care', 'stable', -6.155, 106.825, '+6281234567890', 'Contact with leading +62.'),
+  ('Panti Kontak Aneh 2', 'Rest House', 'new case', 'normal', -6.185, 106.855, '0000000', 'Contact is all zeros.'),
+  ('Panti Kontak Aneh 3', 'Orphanage', 'active care', 'urgent', -6.145, 106.835, '081299999999999', 'Contact is 15 digits — max length.');
+
+-- Coordinates at exact Jakarta boundary corners
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Corner NW', 'Rest House', 'new case', 'normal', -6.080, 106.680, '081100013333', 'Exact northwest corner of Jakarta bounds.'),
+  ('Corner NE', 'Rest House', 'new case', 'normal', -6.080, 107.010, '081100014444', 'Exact northeast corner.'),
+  ('Corner SW', 'Rest House', 'new case', 'normal', -6.380, 106.680, '081100015555', 'Exact southwest corner.'),
+  ('Corner SE', 'Rest House', 'new case', 'normal', -6.380, 107.010, '081100016666', 'Exact southeast corner.');
+
+-- Cluster of 5 houses at nearly identical coordinates (stress test for overlapping markers)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Cluster A1', 'Orphanage', 'active care', 'urgent', -6.200000, 106.900000, '081100017777', 'Cluster of 5 at same spot.'),
+  ('Cluster A2', 'Nursing Home', 'active care', 'stable', -6.200001, 106.900001, '081100018888', 'Nearly identical coords.'),
+  ('Cluster A3', 'Rest House', 'new case', 'normal', -6.200002, 106.900002, '081100019999', 'Third pin on top.'),
+  ('Cluster A4', 'Orphanage', 'active care', 'urgent', -6.200000, 106.900001, '081100020000', 'Fourth stacked.'),
+  ('Cluster A5', 'Nursing Home', 'active care', 'stable', -6.200001, 106.900000, '081100021111', 'Fifth stacked.');
+
+-- Every status × priority combination (3×4 = 12 combos, tests filter grid)
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('Matrix: urgent × new',       'Orphanage',    'new case',     'urgent',  -6.100, 106.710, 'Filter matrix test.'),
+  ('Matrix: urgent × active',    'Nursing Home', 'active care',  'urgent',  -6.110, 106.720, 'Filter matrix test.'),
+  ('Matrix: urgent × follow',    'Rest House',   'follow-up',    'urgent',  -6.120, 106.730, 'Filter matrix test.'),
+  ('Matrix: urgent × closed',    'Orphanage',    'closed',       'urgent',  -6.130, 106.740, 'Filter matrix test.'),
+  ('Matrix: normal × new',       'Nursing Home', 'new case',     'normal',  -6.100, 106.750, 'Filter matrix test.'),
+  ('Matrix: normal × active',    'Rest House',   'active care',  'normal',  -6.110, 106.760, 'Filter matrix test.'),
+  ('Matrix: normal × follow',    'Orphanage',    'follow-up',    'normal',  -6.120, 106.770, 'Filter matrix test.'),
+  ('Matrix: normal × closed',    'Nursing Home', 'closed',       'normal',  -6.130, 106.780, 'Filter matrix test.'),
+  ('Matrix: stable × new',       'Rest House',   'new case',     'stable',  -6.100, 106.790, 'Filter matrix test.'),
+  ('Matrix: stable × active',    'Orphanage',    'active care',  'stable',  -6.110, 106.800, 'Filter matrix test.'),
+  ('Matrix: stable × follow',    'Nursing Home', 'follow-up',    'stable',  -6.120, 106.810, 'Filter matrix test.'),
+  ('Matrix: stable × closed',    'Rest House',   'closed',       'stable',  -6.130, 106.820, 'Filter matrix test.');
+
+-- House with 12 document links (tests Documents section overflow)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, links) VALUES
+  ('Panti Mega Dokumen', 'Orphanage', 'active care', 'stable', -6.168, 106.848, '081100022222', 'Has 12 documents — tests scrolling in doc list.',
+   '[{"name":"Doc 1 - Visit Report January","url":"https://docs.google.com/doc/1"},{"name":"Doc 2 - Budget Q1 2026","url":"https://docs.google.com/sheet/2"},{"name":"Doc 3 - Floor Plan Rev 3","url":"https://drive.google.com/3"},{"name":"Doc 4 - Insurance Policy","url":"https://docs.google.com/doc/4"},{"name":"Doc 5 - Donation Inventory","url":"https://docs.google.com/sheet/5"},{"name":"Doc 6 - Volunteer Schedule Feb","url":"https://docs.google.com/sheet/6"},{"name":"Doc 7 - Medical Records Summary","url":"https://docs.google.com/doc/7"},{"name":"Doc 8 - Renovation Proposal Rev 2","url":"https://docs.google.com/doc/8"},{"name":"Doc 9 - Safety Inspection Report","url":"https://docs.google.com/doc/9"},{"name":"Doc 10 - Annual Financial Statement","url":"https://docs.google.com/sheet/10"},{"name":"Doc 11 - Staff Directory","url":"https://docs.google.com/sheet/11"},{"name":"Doc 12 - Emergency Evacuation Plan","url":"https://docs.google.com/doc/12"}]');
+
+-- Notes with special formatting characters
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Panti Format Chaos', 'Nursing Home', 'active care', 'urgent', -6.158, 106.838, '081100023333',
+   'Line 1\nLine 2\nLine 3\n\n---\n\n**Bold?** *Italic?* `Code?`\n\n<h1>HTML heading?</h1>\n\nTabs:\there\tand\there\n\nURL: https://example.com/test?foo=bar&baz=qux#anchor');
+
+-- House with all optional fields null/empty
+INSERT INTO houses (name, lat, lng) VALUES
+  ('Absolutely Minimal', -6.200, 106.800);
+
+-- House with notes containing only numbers
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('Panti Catatan Angka', 'Rest House', 'active care', 'stable', -6.178, 106.858, '1234567890 1234567890 1234567890 1234567890 1234567890');
+
+-- House name that matches a search for common words
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('Test Search Query Match House Name', 'Orphanage', 'new case', 'normal', -6.148, 106.828, 'This name contains common search words.'),
+  ('Rumah Panti Wisma Yayasan All Types', 'Nursing Home', 'active care', 'stable', -6.188, 106.868, 'Contains all common name prefixes.');
+
 -- Additional houses to reach 156 total for stress testing
 INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
   ('Panti Asuhan Cipta Cinta', 'Orphanage', 'active care', 'stable', -6.143, 106.823, '081200110011', 'Monthly food supply delivered.'),
