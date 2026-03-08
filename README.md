@@ -261,7 +261,11 @@ This is a prototype built for an IB IA submission. The following trade-offs were
 
 ## License
 
-This project was developed as an IB Computer Science Internal Assessment.
+This project was developed as an IB Computer Science Internal Assessment. All code is original work by the author.
+
+Plagiarism or unauthorized reproduction of this project is not permitted under IB Academic Integrity Policy.
+
+The client's name has been withheld at their request. All volunteer names and credentials in the test data are fictional.
 
 ---
 
