@@ -206,6 +206,30 @@ This is a prototype built for an IB IA submission. The following trade-offs were
 
 ---
 
+## Known Limitations
+
+- **Jakarta only** - the bounding box and city dropdown are hardcoded to Jakarta. Other cities are not supported.
+- **No offline mode** - the app requires an internet connection to load and save data. Offline edits are not queued.
+- **Single-user editing** - if two volunteers edit the same house at the same time, the last save wins. There is no real-time sync or conflict resolution.
+- **No pagination** - all house records are fetched at once. Performance may degrade with thousands of records.
+- **Photo storage** - uploaded photos are compressed client-side but there is no server-side size limit enforcement.
+- **Browser-only** - no native mobile app. The interface is responsive but not optimized for small screens.
+
+---
+
+## Future Improvements
+
+- **Supabase Auth** - replace plaintext password checks with Supabase's built-in authentication for hashed passwords, JWTs, and secure server-side sessions.
+- **Multi-city support** - extend the city dropdown to support other cities with their own bounding boxes and tile layers.
+- **Real-time sync** - use Supabase Realtime subscriptions so changes made by one volunteer appear instantly for others.
+- **Offline queue** - cache edits in IndexedDB when offline and sync them when connectivity returns.
+- **Route planning** - integrate routing APIs to help volunteers plan efficient visit routes across multiple houses.
+- **Role-based access** - add admin vs volunteer roles so only admins can delete records or manage accounts.
+- **Pagination and virtual scrolling** - load house records in pages to handle larger datasets without performance issues.
+- **Mobile app** - wrap the existing web app using a framework like Capacitor for a native mobile experience.
+
+---
+
 ## License
 
 This project was developed as an IB Computer Science Internal Assessment.
