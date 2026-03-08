@@ -133,7 +133,12 @@ function openSidebar(houseId) {
   const photoInput = ui.sidebarBody.querySelector("#sbPhotoInput");
   const photoCountEl = ui.sidebarBody.querySelector("#sbPhotoCount");
   const uploadBtn = ui.sidebarBody.querySelector("#sbUploadPhotos");
-  let currentPhotos = Array.isArray(house.photos) ? [...house.photos] : [];
+  let rawPhotos = house.photos;
+  // Safeguard: Supabase may return JSONB as a string in some edge cases
+  if (typeof rawPhotos === "string") {
+    try { rawPhotos = JSON.parse(rawPhotos); } catch (_) { rawPhotos = []; }
+  }
+  let currentPhotos = Array.isArray(rawPhotos) ? [...rawPhotos] : [];
   const MAX_PHOTOS = 10;
 
   function renderPhotos() {
@@ -202,8 +207,9 @@ function openSidebar(houseId) {
 
   async function savePhotosToDb() {
     await supabaseClient.from("houses").update({ photos: currentPhotos }).eq("id", house.id);
+    // Deep-copy into cache so reopening the sidebar reads fresh data
     const houseIdx = state.houses.findIndex((h) => h.id === house.id);
-    if (houseIdx >= 0) state.houses[houseIdx].photos = currentPhotos;
+    if (houseIdx >= 0) state.houses[houseIdx].photos = JSON.parse(JSON.stringify(currentPhotos));
   }
 
   renderPhotos();
