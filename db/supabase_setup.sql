@@ -292,14 +292,103 @@ INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALU
 INSERT INTO houses (name, lat, lng) VALUES
   ('Absolutely Minimal', -6.200, 106.800);
 
--- House with notes containing only numbers
+-- Houses with notes containing only numbers (×4)
 INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
-  ('Panti Catatan Angka', 'Rest House', 'active care', 'stable', -6.178, 106.858, '1234567890 1234567890 1234567890 1234567890 1234567890');
+  ('Panti Catatan Angka 1', 'Rest House', 'active care', 'stable', -6.178, 106.858, '1234567890 1234567890 1234567890 1234567890 1234567890'),
+  ('Panti Catatan Angka 2', 'Orphanage', 'new case', 'normal', -6.138, 106.818, '0'),
+  ('Panti Catatan Angka 3', 'Nursing Home', 'active care', 'urgent', -6.198, 106.898, '99999999999999999999999999999999999999999999999999'),
+  ('Panti Catatan Angka 4', 'Rest House', 'active care', 'stable', -6.158, 106.838, '-1 -2 -3.14159 0.0001 999999999 0 0 0 0 0');
 
--- House name that matches a search for common words
+-- House names that match common search words (×5)
 INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
   ('Test Search Query Match House Name', 'Orphanage', 'new case', 'normal', -6.148, 106.828, 'This name contains common search words.'),
-  ('Rumah Panti Wisma Yayasan All Types', 'Nursing Home', 'active care', 'stable', -6.188, 106.868, 'Contains all common name prefixes.');
+  ('Rumah Panti Wisma Yayasan All Types', 'Nursing Home', 'active care', 'stable', -6.188, 106.868, 'Contains all common name prefixes.'),
+  ('Jakarta Jakarta Jakarta', 'Rest House', 'active care', 'urgent', -6.168, 106.848, 'Repeated city name — search stress.'),
+  ('active care urgent stable normal', 'Orphanage', 'new case', 'normal', -6.128, 106.808, 'Name contains status/priority keywords.'),
+  ('Orphanage Nursing Home Rest House', 'Nursing Home', 'active care', 'stable', -6.208, 106.888, 'Name contains all type values.');
+
+-- More houses with many document links (×4)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, links) VALUES
+  ('Wisma Mega Dokumen 2', 'Nursing Home', 'active care', 'urgent', -6.172, 106.842, '081100030001', 'Second heavy-doc house.',
+   '[{"name":"Quarterly Report Q1","url":"https://docs.google.com/doc/q1"},{"name":"Quarterly Report Q2","url":"https://docs.google.com/doc/q2"},{"name":"Quarterly Report Q3","url":"https://docs.google.com/doc/q3"},{"name":"Quarterly Report Q4","url":"https://docs.google.com/doc/q4"},{"name":"Annual Summary","url":"https://docs.google.com/doc/annual"},{"name":"Donor List 2025","url":"https://docs.google.com/sheet/donors25"},{"name":"Donor List 2026","url":"https://docs.google.com/sheet/donors26"},{"name":"Facility License","url":"https://drive.google.com/license"},{"name":"Fire Safety Cert","url":"https://drive.google.com/fire"},{"name":"Health Inspection March","url":"https://docs.google.com/doc/health"}]'),
+  ('Rumah Dokumen Lengkap 3', 'Rest House', 'active care', 'stable', -6.152, 106.822, '081100030002', 'Third heavy-doc house.',
+   '[{"name":"Blueprint A","url":"https://drive.google.com/bp-a"},{"name":"Blueprint B","url":"https://drive.google.com/bp-b"},{"name":"Electrical Diagram","url":"https://drive.google.com/elec"},{"name":"Plumbing Schematic","url":"https://drive.google.com/plumb"},{"name":"Pest Control Log","url":"https://docs.google.com/sheet/pest"},{"name":"Cleaning Schedule","url":"https://docs.google.com/sheet/clean"},{"name":"Inventory Jan","url":"https://docs.google.com/sheet/inv1"},{"name":"Inventory Feb","url":"https://docs.google.com/sheet/inv2"},{"name":"Inventory Mar","url":"https://docs.google.com/sheet/inv3"}]'),
+  ('Yayasan Arsip Digital 4', 'Orphanage', 'follow-up', 'normal', -6.192, 106.862, '081100030003', 'Fourth heavy-doc house.',
+   '[{"name":"Child Record A001","url":"https://docs.google.com/doc/a001"},{"name":"Child Record A002","url":"https://docs.google.com/doc/a002"},{"name":"Child Record A003","url":"https://docs.google.com/doc/a003"},{"name":"Child Record A004","url":"https://docs.google.com/doc/a004"},{"name":"Child Record A005","url":"https://docs.google.com/doc/a005"},{"name":"Feeding Log Week 1","url":"https://docs.google.com/sheet/feed1"},{"name":"Feeding Log Week 2","url":"https://docs.google.com/sheet/feed2"},{"name":"Medical History Overview","url":"https://docs.google.com/doc/med"},{"name":"Teacher Attendance","url":"https://docs.google.com/sheet/teach"},{"name":"Activity Photos","url":"https://drive.google.com/photos"},{"name":"Sponsor Report","url":"https://docs.google.com/doc/sponsor"},{"name":"Government Filing","url":"https://docs.google.com/doc/gov"},{"name":"Tax Exempt Cert","url":"https://drive.google.com/tax"},{"name":"Board Minutes Jan","url":"https://docs.google.com/doc/board1"},{"name":"Board Minutes Feb","url":"https://docs.google.com/doc/board2"}]'),
+  ('Panti Dokumen Kosong', 'Nursing Home', 'active care', 'stable', -6.132, 106.802, '081100030004', 'Has links with empty names/urls.',
+   '[{"name":"","url":"https://example.com/no-name"},{"name":"No URL Doc","url":""},{"name":"","url":""},{"name":"Normal Link","url":"https://example.com"}]');
+
+-- More houses with all optional fields null/empty (×4)
+INSERT INTO houses (name, lat, lng) VALUES
+  ('Absolutely Minimal 2', -6.210, 106.810),
+  ('Absolutely Minimal 3', -6.220, 106.820),
+  ('Absolutely Minimal 4', -6.230, 106.830);
+INSERT INTO houses (name, type, lat, lng) VALUES
+  ('Type Only No Status', 'Orphanage', -6.240, 106.840);
+
+-- More houses with no contact (×3)
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('Rumah Tanpa Kontak 2', 'Orphanage', 'new case', 'normal', -6.112, 106.812, 'No contact available.'),
+  ('Rumah Tanpa Kontak 3', 'Nursing Home', 'active care', 'urgent', -6.122, 106.822, 'Contact was removed.'),
+  ('Rumah Tanpa Kontak 4', 'Rest House', 'follow-up', 'stable', -6.132, 106.832, 'Never had a phone number.');
+
+-- More houses with no notes (×3)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact) VALUES
+  ('Panti Tanpa Catatan 2', 'Nursing Home', 'active care', 'stable', -6.142, 106.842, '081100040001'),
+  ('Panti Tanpa Catatan 3', 'Rest House', 'active care', 'urgent', -6.152, 106.852, '081100040002'),
+  ('Panti Tanpa Catatan 4', 'Orphanage', 'new case', 'normal', -6.162, 106.862, '081100040003');
+
+-- More duplicate names (×4 of same name = 6 total with originals)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Panti Asuhan Cahaya', 'Nursing Home', 'follow-up', 'normal', -6.159, 106.854, '081200007777', 'Fourth duplicate.'),
+  ('Panti Asuhan Cahaya', 'Rest House', 'active care', 'stable', -6.161, 106.856, '081200006666', 'Fifth duplicate.'),
+  ('Panti Asuhan Cahaya', 'Orphanage', 'new case', 'urgent', -6.163, 106.858, '081200005555', 'Sixth duplicate — max stress.'),
+  ('Panti Asuhan Cahaya', 'Orphanage', 'closed', 'stable', -6.149, 106.844, '081200004444', 'Seventh duplicate — closed status.');
+
+-- More overlapping coordinate clusters (second cluster of 4)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Cluster B1', 'Orphanage', 'active care', 'urgent', -6.150000, 106.850000, '081100050001', 'Cluster B — stacked.'),
+  ('Cluster B2', 'Nursing Home', 'new case', 'normal', -6.150001, 106.850000, '081100050002', 'Cluster B — stacked.'),
+  ('Cluster B3', 'Rest House', 'active care', 'stable', -6.150000, 106.850001, '081100050003', 'Cluster B — stacked.'),
+  ('Cluster B4', 'Orphanage', 'active care', 'urgent', -6.150001, 106.850001, '081100050004', 'Cluster B — stacked.');
+
+-- More weird contacts (×4)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Panti Kontak Aneh 4', 'Orphanage', 'active care', 'stable', -6.113, 106.813, '+62', 'Just a country code.'),
+  ('Panti Kontak Aneh 5', 'Nursing Home', 'new case', 'normal', -6.123, 106.823, '08', 'Two digits only.'),
+  ('Panti Kontak Aneh 6', 'Rest House', 'active care', 'urgent', -6.133, 106.833, '628888888888888', 'Starts with 62, max digits.'),
+  ('Panti Kontak Aneh 7', 'Orphanage', 'active care', 'stable', -6.143, 106.843, '0812 3456 7890', 'Has spaces in number.');
+
+-- More single/short character names (×4)
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('Z', 'Nursing Home', 'new case', 'normal', -6.114, 106.814, 'Single letter Z.'),
+  ('AB', 'Rest House', 'active care', 'stable', -6.124, 106.824, 'Two letter name.'),
+  ('1', 'Orphanage', 'active care', 'urgent', -6.134, 106.834, 'Numeric name.'),
+  ('.', 'Nursing Home', 'new case', 'normal', -6.144, 106.844, 'Dot as name.');
+
+-- More whitespace / weird formatting names (×4)
+INSERT INTO houses (name, type, status, priority, lat, lng, notes) VALUES
+  ('     Lots    Of    Spaces     ', 'Orphanage', 'active care', 'stable', -6.116, 106.816, 'Extra spaces everywhere.'),
+  ('ALLCAPSNOSPACESVERYLONGNAME', 'Nursing Home', 'new case', 'normal', -6.126, 106.826, 'No spaces, all caps.'),
+  ('all-lowercase-dashes', 'Rest House', 'active care', 'urgent', -6.136, 106.836, 'Kebab case name.'),
+  ('CamelCaseHouseName', 'Orphanage', 'active care', 'stable', -6.146, 106.846, 'CamelCase name.');
+
+-- Notes with various problematic content (×5)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
+  ('Notes Edge 1', 'Orphanage', 'active care', 'urgent', -6.117, 106.817, '081100060001', ''),
+  ('Notes Edge 2', 'Nursing Home', 'new case', 'normal', -6.127, 106.827, '081100060002', '   '),
+  ('Notes Edge 3', 'Rest House', 'active care', 'stable', -6.137, 106.837, '081100060003', '🔴🟡🟢🔵⚪⚫🟤🟣🟠 just emojis in notes'),
+  ('Notes Edge 4', 'Orphanage', 'active care', 'urgent', -6.147, 106.847, '081100060004', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA single repeating character x100'),
+  ('Notes Edge 5', 'Nursing Home', 'active care', 'stable', -6.157, 106.857, '081100060005', '{"json":"in notes","array":[1,2,3],"nested":{"key":"value"}}');
+
+-- Houses with photos array edge cases (×3)
+INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes, photos) VALUES
+  ('Panti Foto Satu', 'Orphanage', 'active care', 'stable', -6.118, 106.818, '081100070001', 'Has exactly 1 photo.',
+   '[{"url":"https://placehold.co/400x300/e74c3c/fff?text=Solo+Photo","path":"test/solo.jpg","name":"Only photo","caption":"The one and only"}]'),
+  ('Panti Foto Sembilan', 'Nursing Home', 'active care', 'urgent', -6.128, 106.828, '081100070002', 'Has 9 photos — one slot left for upload.',
+   '[{"url":"https://placehold.co/400x300/e74c3c/fff?text=P1","path":"test/p1.jpg","name":"P1","caption":"1"},{"url":"https://placehold.co/400x300/3498db/fff?text=P2","path":"test/p2.jpg","name":"P2","caption":"2"},{"url":"https://placehold.co/400x300/2ecc71/fff?text=P3","path":"test/p3.jpg","name":"P3","caption":"3"},{"url":"https://placehold.co/400x300/9b59b6/fff?text=P4","path":"test/p4.jpg","name":"P4","caption":"4"},{"url":"https://placehold.co/400x300/f39c12/fff?text=P5","path":"test/p5.jpg","name":"P5","caption":"5"},{"url":"https://placehold.co/400x300/1abc9c/fff?text=P6","path":"test/p6.jpg","name":"P6","caption":"6"},{"url":"https://placehold.co/400x300/e67e22/fff?text=P7","path":"test/p7.jpg","name":"P7","caption":"7"},{"url":"https://placehold.co/400x300/34495e/fff?text=P8","path":"test/p8.jpg","name":"P8","caption":"8"},{"url":"https://placehold.co/400x300/c0392b/fff?text=P9","path":"test/p9.jpg","name":"P9","caption":"9"}]'),
+  ('Panti Foto Kosong Array', 'Rest House', 'new case', 'normal', -6.138, 106.838, '081100070003', 'Photos field is empty array.', '[]');
+
 
 -- Additional houses to reach 156 total for stress testing
 INSERT INTO houses (name, type, status, priority, lat, lng, contact, notes) VALUES
