@@ -273,4 +273,18 @@ All source files include developer-focused comments (file headers, JSDoc, and in
 
 ---
 
+## References
+
+The original system this project is based on can be viewed at [https://www.tzuchi.or.id/](https://www.tzuchi.or.id/) (click VIS for the original website).
+
+- Agafonkin, Vladimir. _Leaflet_. Version 1.9.4, 2023, [leafletjs.com](https://leafletjs.com). Accessed 16 June 2025.
+- Leaflet Contributors. _Leaflet.markercluster_. Version 1.5.3, GitHub, [github.com/Leaflet/Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster). Accessed 16 June 2025.
+- Mozilla Contributors. "HTMLCanvasElement: toBlob() Method." _MDN Web Docs_, Mozilla, [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob). Accessed 16 June 2025.
+- OpenStreetMap Contributors. _OpenStreetMap_. OpenStreetMap Foundation, [openstreetmap.org](https://openstreetmap.org). Accessed 16 June 2025.
+- SheetJS LLC. _SheetJS Community Edition_. SheetJS LLC, [sheetjs.com](https://sheetjs.com). Accessed 16 June 2025.
+- Supabase Inc. _Supabase_. Supabase Inc., [supabase.com](https://supabase.com). Accessed 16 June 2025.
+- Tzu Chi Indonesia. _Volunteer Information System (VIS)_. Internal system interface screenshots provided by client, 18 Apr. 2025.
+
+---
+
 > _I hope dapet 34/34 anjay, izin_ 🙏
