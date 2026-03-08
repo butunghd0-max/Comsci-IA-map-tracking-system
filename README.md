@@ -12,6 +12,8 @@ A web-based map tracking application built for a volunteer humanitarian organiza
 
 **Live:** [https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/](https://butunghd0-max.github.io/Comsci-IA-map-tracking-system/)
 
+> **Note:** The live site depends on a free-tier Supabase project which may be paused due to inactivity. If houses don't load or changes don't save, the backend has likely been deactivated. Clone the repo and set up your own Supabase instance using the instructions below for the full experience.
+
 ---
 
 ## Table of Contents
