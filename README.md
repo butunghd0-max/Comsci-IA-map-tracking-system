@@ -199,3 +199,7 @@ This is a prototype built for an IB IA submission. The following trade-offs were
 ## License
 
 This project was developed as an IB Computer Science Internal Assessment.
+
+---
+
+> _I hope dapet 34/34 anjay, izin_ 🙏
