@@ -263,13 +263,15 @@ This is a prototype built for an IB IA submission. The following trade-offs were
 
 ## License
 
-This project was developed as an IB Computer Science Internal Assessment. All code is original work by the author.
+This project was developed as an IB Diploma Programme Computer Science SL Internal Assessment. All code is original work by the author.
 
 Plagiarism or unauthorized reproduction of this project is not permitted under IB Academic Integrity Policy.
 
 The client's name has been withheld at their request. All volunteer names and credentials in the test data are fictional.
 
 All source files include developer-focused comments (file headers, JSDoc, and inline explanations) so that the client's IT team can understand, maintain, and extend the codebase if the system is accepted for production use.
+
+The accompanying IA paper may be published in this repository in the future, pending IB guidelines on public sharing of assessment work.
 
 ---
 
